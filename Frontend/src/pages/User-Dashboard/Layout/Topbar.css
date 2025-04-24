@@ -1,0 +1,133 @@
+/* TopBar Styles */
+.topbar-container {
+  background-color: white;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  position: fixed;
+  width: 100%;
+  top: 0;
+  z-index: 40;
+}
+
+.topbar-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 4rem;
+  padding: 0 1rem;
+}
+
+.left-section {
+  display: flex;
+  align-items: center;
+}
+
+.menu-button {
+  padding: 0.5rem;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  margin-left: 1rem;
+  text-decoration: none;
+}
+
+.logo-icon {
+  background-color: #4f46e5;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+}
+
+.logo-icon-package {
+  color: white;
+}
+
+.logo-text {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: black;
+  margin-left: 0.5rem;
+}
+
+.right-section {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.alerts-link {
+  position: relative;
+  padding: 0.5rem;
+  color: #4f46e5;
+  cursor: pointer;
+}
+
+.unread-alerts-badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background-color: red;
+  color: white;
+  font-size: 0.75rem;
+  border-radius: 50%;
+  height: 1rem;
+  width: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.profile-section {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.profile-button {
+  display: flex;
+  align-items: center;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.profile-icon {
+  background-color: #e5e7eb;
+  padding: 0.5rem;
+  border-radius: 50%;
+}
+
+.profile-name {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #4f46e5;
+  margin-left: 0.5rem;
+}
+
+.profile-menu {
+  position: absolute;
+  right: 0;
+  top: 2.5rem;
+  background-color: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  padding: 0.5rem;
+  width: 10rem;
+  z-index: 50;
+}
+
+.profile-menu-item {
+  padding: 0.5rem;
+  font-size: 0.875rem;
+  color: #333;
+  text-decoration: none;
+  display: block;
+  border-radius: 10px;
+}
+
+.profile-menu-item:hover {
+  background-color: #f3f3f3;
+}

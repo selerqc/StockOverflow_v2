@@ -1,0 +1,18 @@
+.registration-box {
+  text-align: left;
+
+  margin: 0 auto 2rem auto;
+}
+
+.ant-form-item {
+  margin-bottom: 0rem;
+}
+
+.registration-link:hover {
+  text-decoration: underline;
+}
+.registration-input-icon {
+  color: #9ca3af;
+  height: 1.25rem;
+  width: 1.25rem;
+}

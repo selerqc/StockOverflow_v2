@@ -1,0 +1,23 @@
+/* Layout Styles */
+.layout-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #f3f4f6;
+}
+
+.main-content {
+  padding-top: 4rem; /* Adjust for topbar height */
+  padding-left: 2rem; /* Left padding for the content */
+  padding-right: 2rem; /* Right padding for the content */
+  padding-bottom: 2rem; /* Bottom padding for the content */
+  transition: all 0.3s ease;
+}
+
+.sidebar-open {
+  margin-left: 16rem; /* Add margin when the sidebar is open */
+}
+
+.sidebar-closed {
+  margin-left: 0; /* No margin when the sidebar is closed */
+}
