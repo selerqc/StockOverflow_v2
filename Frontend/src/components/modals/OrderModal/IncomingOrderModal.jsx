@@ -35,11 +35,9 @@ const OrderModal = ({ order, onClose }) => {
         },
       });
 
-      const alertMessage = `Incoming Order ${formData.name} created successfully`;
-
       const newAlert = {
         type: "success",
-        message: alertMessage,
+        message: `Incoming Order ${formData.name} created successfully`,
         date: new Date().toISOString(),
         is_read: false,
         priority: "low",
@@ -80,7 +78,8 @@ const OrderModal = ({ order, onClose }) => {
         <Form.Item
           label='Product Name'
           name='name'
-          rules={[{ required: true, message: "Please select a product" }]}>
+          rules={[{ required: true, message: "Please select a product" }]}
+          style={{ marginBottom: "1rem" }}>
           <Select placeholder='Select a product'>
             {productOptions.map((product) => (
               <Option key={product._id} value={product.name}>
@@ -93,14 +92,16 @@ const OrderModal = ({ order, onClose }) => {
         <Form.Item
           label='Quantity'
           name='stock_level'
-          rules={[{ required: true, message: "Please enter the quantity" }]}>
+          rules={[{ required: true, message: "Please enter the quantity" }]}
+          style={{ marginBottom: "1rem" }}>
           <Input type='number' min='1' />
         </Form.Item>
 
         <Form.Item
           label='Total Price ($)'
           name='total_price'
-          rules={[{ required: true, message: "Please enter the total price" }]}>
+          rules={[{ required: true, message: "Please enter the total price" }]}
+          style={{ marginBottom: "1rem" }}>
           <Input type='number' min='0' step='0.01' />
         </Form.Item>
 

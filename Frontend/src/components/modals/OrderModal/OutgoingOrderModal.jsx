@@ -61,7 +61,7 @@ const OutgoingOrderModal = ({ order, onClose }) => {
 
   return (
     <Modal
-      title={order ? "Edit Outgoing Order" : "New Outgoing Order"}
+      title={"New Outgoing Order"}
       open={true}
       onCancel={onClose}
       footer={null}>
@@ -81,7 +81,8 @@ const OutgoingOrderModal = ({ order, onClose }) => {
         <Form.Item
           label='Product Name'
           name='name'
-          rules={[{ required: true, message: "Please select a product" }]}>
+          rules={[{ required: true, message: "Please select a product" }]}
+          style={{ marginBottom: "1rem" }}>
           <Select placeholder='Select a product'>
             {productOptions.map((product) => (
               <Option key={product._id} value={product.name}>
@@ -94,14 +95,16 @@ const OutgoingOrderModal = ({ order, onClose }) => {
         <Form.Item
           label='Quantity'
           name='stock_level'
-          rules={[{ required: true, message: "Please enter the quantity" }]}>
+          rules={[{ required: true, message: "Please enter the quantity" }]}
+          style={{ marginBottom: "1rem" }}>
           <Input type='number' min='1' />
         </Form.Item>
 
         <Form.Item
           label='Total Price ($)'
           name='total_price'
-          rules={[{ required: true, message: "Please enter the total price" }]}>
+          rules={[{ required: true, message: "Please enter the total price" }]}
+          style={{ marginBottom: "1rem" }}>
           <Input type='number' min='0' step='0.01' />
         </Form.Item>
 
@@ -114,7 +117,7 @@ const OutgoingOrderModal = ({ order, onClose }) => {
             }}>
             <Button onClick={onClose}>Cancel</Button>
             <Button type='primary' htmlType='submit'>
-              {order ? "Update Order" : "Create Order"}
+              {"Create Order"}
             </Button>
           </div>
         </Form.Item>

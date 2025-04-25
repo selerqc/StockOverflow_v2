@@ -10,6 +10,6 @@ categoryRoute
   .post("/addCategory", Category.AddCategory)
   .get("/getCategory", Category.GetAllCategory)
   .delete("/deleteCategory/:id", Category.DeleteOneCategory)
-  .put("/updateCategory", Category.UpdateCategory);
+  .patch("/updateCategory/:id", Category.UpdateCategory);
 
 module.exports = categoryRoute;

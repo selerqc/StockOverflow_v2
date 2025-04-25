@@ -1,24 +1,23 @@
 import React, { useState, useEffect } from "react";
 import {
-  Search,
-  Filter,
-  ArrowUpRight,
-  ArrowDownRight,
-  Clock,
-  CheckCircle,
-  XCircle,
-} from "lucide-react";
-import IncomingOrderModal from "../../../components/modals/OrderModal/IncomingOrderModal";
-import OutgoingOrderModal from "../../../components/modals/OrderModal/OutgoingOrderModal";
-import ViewOrderDetails from "../../../components/modals/ViewOrderDetails";
-import "./Orders.css";
+  ArrowUpOutlined,
+  ArrowDownOutlined,
+  ClockCircleOutlined,
+  CheckCircleOutlined,
+  CloseCircleOutlined,
+  SearchOutlined,
+  FilterOutlined,
+} from "@ant-design/icons";
+import { Button, Table, Select, Input, Skeleton, Modal } from "antd";
 import axios from "axios";
-import Skeleton from "@mui/material/Skeleton";
 import { useToken } from "../../../hooks/TokenContext";
 import { baseURL } from "../../../../config.js";
+import IncomingOrderModal from "../../../components/modals/OrderModal/IncomingOrderModal";
+import OutgoingOrderModal from "../../../components/modals/OrderModal/OutgoingOrderModal";
+import ViewOrderDetails from "../../../components/modals/OrderModal/ViewOrderDetails.jsx";
+import "./Orders.css";
 
 const Orders = () => {
-  // State management
   const [orders, setOrders] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
@@ -26,7 +25,6 @@ const Orders = () => {
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(undefined);
   const [orderType, setOrderType] = useState("outgoing");
-  const [alerts, setAlerts] = useState([]);
   const [loading, setLoading] = useState(true);
   const { token } = useToken();
 
@@ -41,6 +39,7 @@ const Orders = () => {
         setOrders(response.data.data);
       });
   };
+
   useEffect(() => {
     getTransactions();
     const interval = setInterval(() => {
@@ -78,8 +77,6 @@ const Orders = () => {
       priority: "low",
     };
 
-    setAlerts((prevAlerts) => [...prevAlerts, newAlert]);
-
     await axios.post(`${baseURL}/alerts/addAlerts`, newAlert, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -103,137 +100,131 @@ const Orders = () => {
     return matchesStatus;
   });
 
-  const getStatusIcon = (status) => {
-    switch (status) {
-      case "completed":
-        return <CheckCircle size={18} className='status-icon completed' />;
-      case "pending":
-        return <Clock size={18} className='status-icon pending' />;
-      case "cancelled":
-        return <XCircle size={18} className='status-icon cancelled' />;
-      default:
-        return null;
-    }
-  };
+  const columns = [
+    {
+      title: "Order ID",
+      dataIndex: "_id",
+      key: "_id",
+      render: (text) => `#${text}`,
+    },
+    {
+      title: "Product",
+      dataIndex: "name",
+      key: "name",
+    },
+    {
+      title: "Type",
+      dataIndex: "type",
+      key: "type",
+      render: (type) => (
+        <span>
+          {type === "incoming" ? (
+            <ArrowUpOutlined style={{ color: "green" }} />
+          ) : (
+            <ArrowDownOutlined style={{ color: "blue" }} />
+          )}
+          {type.charAt(0).toUpperCase() + type.slice(1)}
+        </span>
+      ),
+    },
+    {
+      title: "Quantity",
+      dataIndex: "stock_level",
+      key: "stock_level",
+    },
+    {
+      title: "Total Price",
+      dataIndex: "total_price",
+      key: "total_price",
+      render: (price) => `$${price}`,
+    },
+    {
+      title: "Date",
+      dataIndex: "createdAt",
+      key: "createdAt",
+    },
+    {
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+      render: (status, record) => (
+        <Select
+          value={status}
+          onChange={(value) => handleStatusChange(record._id, value)}
+          style={{ width: 120 }}>
+          <Select.Option value='pending'>Pending</Select.Option>
+          <Select.Option value='completed'>Completed</Select.Option>
+          <Select.Option value='cancelled'>Cancelled</Select.Option>
+        </Select>
+      ),
+    },
+    {
+      title: "Actions",
+      key: "actions",
+      render: (_, record) => (
+        <Button type='link' onClick={() => handleViewDetails(record)}>
+          View Details
+        </Button>
+      ),
+    },
+  ];
+
   useEffect(() => {
     const timer = setTimeout(() => {
       setLoading(false);
     }, 1500);
     return () => clearTimeout(timer);
   }, [loading]);
+
   return (
     <div className='orders-container'>
       <div className='header'>
         <h1 className='title'>Order Management</h1>
         <div className='action-buttons'>
-          <button
-            onClick={() => handleNewOrder("outgoing")}
-            className='btn primary'>
-            <ArrowDownRight size={20} />
-            <span>New Outgoing Order</span>
-          </button>
-          <button
-            onClick={() => handleNewOrder("incoming")}
-            className='btn secondary'>
-            <ArrowUpRight size={20} />
-            <span>New Incoming Order</span>
-          </button>
+          <Button
+            type='primary'
+            icon={<ArrowDownOutlined />}
+            onClick={() => handleNewOrder("outgoing")}>
+            New Outgoing Order
+          </Button>
+          <Button
+            type='default'
+            icon={<ArrowUpOutlined />}
+            onClick={() => handleNewOrder("incoming")}>
+            New Incoming Order
+          </Button>
         </div>
       </div>
 
       <div className='orders-panel'>
         <div className='order-filters'>
-          <div className='order-search-box'>
-            <Search className='order-search-icon' size={20} />
-            <input
-              type='text'
-              placeholder='Search orders...'
-              className='order-search-input'
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
-          <div className='status-filter'>
-            <Filter size={20} className='filter-icon' />
-            <select
-              className='status-select'
-              value={filterStatus}
-              onChange={(e) => setFilterStatus(e.target.value)}>
-              <option value='all'>All Status</option>
-              <option value='pending'>Pending</option>
-              <option value='completed'>Completed</option>
-              <option value='cancelled'>Cancelled</option>
-            </select>
-          </div>
+          <Input
+            placeholder='Search orders...'
+            prefix={<SearchOutlined />}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            style={{ width: 300, marginRight: 16 }}
+          />
+          <Select
+            value={filterStatus}
+            onChange={(value) => setFilterStatus(value)}
+            style={{ width: 200 }}
+            suffixIcon={<FilterOutlined />}>
+            <Select.Option value='all'>All Status</Select.Option>
+            <Select.Option value='pending'>Pending</Select.Option>
+            <Select.Option value='completed'>Completed</Select.Option>
+            <Select.Option value='cancelled'>Cancelled</Select.Option>
+          </Select>
         </div>
         {loading ? (
-          <div className='skeleton-loading'>
-            <Skeleton variant='text' width={1100} height={100} />
-            <Skeleton variant='rounded' width={1100} height={200} />
-          </div>
+          <Skeleton active />
         ) : (
-          <div className='table-container'>
-            <table className='orders-table'>
-              <thead>
-                <tr>
-                  <th>Order ID</th>
-                  <th>Product</th>
-                  <th>Type</th>
-                  <th>Quantity</th>
-                  <th>Total Price</th>
-                  <th>Date</th>
-                  <th>Status</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredOrders.map((order) => (
-                  <tr key={order._id}>
-                    <td className='order-id'>#{order._id}</td>
-                    <td>{order.name}</td>
-                    <td>
-                      <span className={`order-type ${order.type}`}>
-                        {order.type === "incoming" ? (
-                          <ArrowUpRight size={18} />
-                        ) : (
-                          <ArrowDownRight size={18} />
-                        )}
-                        <span>
-                          {order.type.charAt(0).toUpperCase() +
-                            order.type.slice(1)}
-                        </span>
-                      </span>
-                    </td>
-                    <td>{order.stock_level}</td>
-                    <td>${order.total_price}</td>
-                    <td>{order.createdAt}</td>
-                    <td>
-                      <div className='status-selector'>
-                        {getStatusIcon(order.status)}
-                        <select
-                          className='status-dropdown'
-                          value={order.status}
-                          onChange={(e) =>
-                            handleStatusChange(order._id, e.target.value)
-                          }>
-                          <option value='pending'>Pending</option>
-                          <option value='completed'>Completed</option>
-                          <option value='cancelled'>Cancelled</option>
-                        </select>
-                      </div>
-                    </td>
-                    <td>
-                      <button
-                        onClick={() => handleViewDetails(order)}
-                        className='btn secondary small'>
-                        View Details
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <Table
+            dataSource={filteredOrders}
+            columns={columns}
+            rowKey='_id'
+            pagination={{ pageSize: 10 }}
+          />
         )}
       </div>
 

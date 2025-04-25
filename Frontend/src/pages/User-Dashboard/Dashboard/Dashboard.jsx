@@ -51,7 +51,7 @@ const Dashboard = () => {
   const { token } = useToken();
 
   useEffect(() => {
-    Promise.all([getProductStatus(), getStatusCount(), getTopSellingProduct()])
+    Promise.all([getProductStatus(), getStatusCount()])
       .then(([productResponse, statusResponse]) => {
         setProductCount(productResponse.data.productCount);
         setStatusCount(statusResponse.data.pending);
@@ -72,14 +72,6 @@ const Dashboard = () => {
 
   const getStatusCount = async () => {
     return await axios.get(`${baseURL}/transactions/getTransactionStatus`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-  };
-
-  const getTopSellingProduct = async () => {
-    return await axios.get(`${baseURL}/products/top-selling`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },

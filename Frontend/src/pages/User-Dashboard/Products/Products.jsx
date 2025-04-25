@@ -123,11 +123,11 @@ const Products = () => {
       title: "Stock Level",
       dataIndex: "stock_level",
       key: "stock_level",
-      render: (stockLevel) => (
+      render: (stock_level) => (
         <Badge
-          count={stockLevel}
+          count={stock_level}
           style={{
-            backgroundColor: stockLevel <= 10 ? "#ff4d4f" : "#52c41a",
+            backgroundColor: stock_level <= 20 ? "#ff4d4f" : "#52c41a",
           }}
         />
       ),

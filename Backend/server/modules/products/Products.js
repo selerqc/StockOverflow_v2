@@ -1,6 +1,4 @@
-const userModel = require("../../models/user.model");
 const productsModel = require("../../models/products.model");
-const transactionsModel = require("../../models/transaction.model");
 
 const validator = require("validator");
 
@@ -80,40 +78,45 @@ const ProductsController = {
   },
 
   UpdateProduct: async (req, res) => {
-    const { name, price, category_id, stock_level, sku } = req.body;
+    try {
+      const { name, price, category_id, stock_level, sku } = req.body;
 
-    if (validator.isEmpty(name, { ignore_whitespace: true }))
-      throw "Name is required";
-    if (validator.isEmpty(price, { ignore_whitespace: true }))
-      throw "Price is required";
-    if (validator.isEmpty(category_id, { ignore_whitespace: true }))
-      throw "Category is required";
-    if (validator.isEmpty(stock_level, { ignore_whitespace: true }))
-      throw "Stock level is required";
-    if (validator.isEmpty(sku, { ignore_whitespace: true }))
-      throw "SKU is required";
-    if (!validator.isNumeric(price.toString())) throw "Price must be a number";
-    if (!validator.isNumeric(stock_level.toString()))
-      throw "Stock level must be a number";
+      if (validator.isEmpty(name, { ignore_whitespace: true }))
+        throw "Name is required";
+      if (validator.isEmpty(price, { ignore_whitespace: true }))
+        throw "Price is required";
+      if (validator.isEmpty(category_id, { ignore_whitespace: true }))
+        throw "Category is required";
+      if (validator.isEmpty(stock_level, { ignore_whitespace: true }))
+        throw "Stock level is required";
+      if (validator.isEmpty(sku, { ignore_whitespace: true }))
+        throw "SKU is required";
+      if (!validator.isNumeric(price.toString()))
+        throw "Price must be a number";
+      if (!validator.isNumeric(stock_level.toString()))
+        throw "Stock level must be a number";
 
-    const updatedProduct = await productsModel.findOneAndUpdate(
-      { _id: req.params.id, user_id: req.user._id },
+      const updatedProduct = await productsModel.findOneAndUpdate(
+        { _id: req.params.id, user_id: req.user._id },
 
-      {
-        name: name,
-        category_id: category_id,
-        price: price,
-        stock_level: stock_level,
-        sku: sku,
-      },
-      { new: true }
-    );
+        {
+          name: name,
+          category_id: category_id,
+          price: price,
+          stock_level: stock_level,
+          sku: sku,
+        },
+        { new: true }
+      );
 
-    res.status(200).json({
-      status: "success",
-      message: "Product updated successfully",
-      product: updatedProduct.updatedAt,
-    });
+      res.status(200).json({
+        status: "success",
+        message: "Product updated successfully",
+        product: updatedProduct.updatedAt,
+      });
+    } catch (error) {
+      throw error;
+    }
   },
 
   DeleteProduct: async (req, res) => {

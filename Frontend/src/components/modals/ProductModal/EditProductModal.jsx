@@ -29,7 +29,7 @@ const EditProductModal = ({ product, onClose }) => {
     if (product) {
       form.setFieldsValue({
         name: product.name,
-        category_id: product.category_id,
+        category: product.category_id._id,
         price: product.price,
         stock_level: product.stock_level,
         sku: product.sku,
@@ -39,15 +39,15 @@ const EditProductModal = ({ product, onClose }) => {
 
   const handleSubmit = async (values) => {
     try {
-      const { name, category, price, stock_level, sku } = values;
-      console.log(category);
+      const { name, price, category, stock_level, sku } = values;
+      console.log(values);
       const response = await axios.patch(
         `${baseURL}/products/updateProduct/${product._id}`,
         {
           name: name,
           category_id: category,
-          price: price,
-          stock_level: stock_level,
+          price: price.toString(),
+          stock_level: stock_level.toString(),
           sku: sku,
         },
         {

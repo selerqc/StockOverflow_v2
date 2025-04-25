@@ -86,8 +86,8 @@ const ProductModal = ({ onClose }) => {
         initialValues={{
           name: "",
           category: "",
-          price: 0,
-          stock_level: 0,
+          price: "",
+          stock_level: "",
           sku: "",
         }}
         onFinish={handleSubmit}>

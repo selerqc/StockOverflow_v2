@@ -5,10 +5,12 @@ import {
   EditOutlined,
   DeleteOutlined,
 } from "@ant-design/icons";
+import { Typography } from "antd";
 import { Button, Input, Card, Modal, message, Flex, Switch } from "antd";
 import { Package } from "lucide-react";
 import axios from "axios";
-import CategoryModal from "../../../components/modals/CategoryModal";
+import CategoryModal from "../../../components/modals/CategoryModal/AddCategoryModal.jsx";
+import EditCategoryModal from "../../../components/modals/CategoryModal/EditCategoryModal.jsx";
 import "./Categories.css";
 import { useToken } from "../../../hooks/TokenContext";
 import { baseURL } from "../../../../config.js";
@@ -20,12 +22,20 @@ const Categories = () => {
   const [selectedCategory, setSelectedCategory] = useState(undefined);
   const [loading, setLoading] = useState(true);
   const { token } = useToken();
+  const { Title, Text } = Typography;
+
+  useEffect(() => {
+    fetchCategories();
+    const interval = setInterval(fetchCategories, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
   useEffect(() => {
     setTimeout(() => {
       setLoading(false);
     }, 1000);
-    fetchCategories();
   }, []);
+
   const fetchCategories = async () => {
     await axios
       .get(`${baseURL}/category/getCategory`, {
@@ -147,24 +157,35 @@ const Categories = () => {
                   />
                 </>
               }>
-              <p>Product Description: {category.description}</p>
-              <p>
+              <Title level={5} style={{ marginTop: "0rem" }}>
+                Product Description: {category.description}
+              </Title>
+              <Text type='secondary'>
                 Updated: {new Date(category.updatedAt).toLocaleDateString()}
-              </p>
+              </Text>
             </Card>
           ))}
         </div>
       </div>
 
-      {isModalOpen && (
-        <CategoryModal
+      {isModalOpen && selectedCategory ? (
+        <EditCategoryModal
           category={selectedCategory}
-          onSave={handleSaveCategory}
           onClose={() => {
             setIsModalOpen(false);
             setSelectedCategory(undefined);
           }}
         />
+      ) : (
+        isModalOpen && (
+          <CategoryModal
+            onSave={handleSaveCategory}
+            onClose={() => {
+              setIsModalOpen(false);
+              setSelectedCategory(undefined);
+            }}
+          />
+        )
       )}
     </div>
   );

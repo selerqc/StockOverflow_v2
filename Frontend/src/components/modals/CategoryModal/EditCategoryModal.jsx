@@ -1,60 +1,56 @@
 import React from "react";
 import { Modal, Form, Input, Button, message } from "antd";
 import axios from "axios";
-import { useToken } from "../../hooks/TokenContext";
-import { baseURL } from "../../../config";
+import { useToken } from "../../../hooks/TokenContext";
+import { baseURL } from "../../../../config";
 
-const CategoryModal = ({ category, onClose, onSave }) => {
+const EditCategoryModal = ({ category, onClose }) => {
   const [form] = Form.useForm();
   const { token } = useToken();
 
   const handleSubmit = async (values) => {
-    const url = category
-      ? `${baseURL}/category/updateCategory/${category._id}`
-      : `${baseURL}/category/addCategory`;
-
-    const method = category ? "put" : "post";
+    console.log(values);
 
     try {
-      await axios[method](url, values, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      message.success(
-        category
-          ? "Category updated successfully"
-          : "Category added successfully"
+      await axios.patch(
+        `${baseURL}/category/updateCategory/${category._id}`,
+        values,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
+      message.success("Category updated successfully");
       form.resetFields();
-      onSave(values);
+
       onClose();
     } catch (error) {
-      console.error("Error adding/updating category:", error);
+      console.error("Error updating category:", error);
     }
   };
 
   return (
-    <Modal
-      title={category ? "Edit Category" : "Add New Category"}
-      open={true}
-      onCancel={onClose}
-      footer={null}>
+    <Modal title='Edit Category' open={true} onCancel={onClose} footer={null}>
       <Form
         form={form}
         layout='vertical'
-        initialValues={category || { name: "", description: "" }}
+        initialValues={category}
         onFinish={handleSubmit}>
         <Form.Item
           label='Category Name'
           name='name'
           rules={[
             { required: true, message: "Please enter the category name" },
-          ]}>
+          ]}
+          style={{ marginBottom: "1rem" }}>
           <Input placeholder='Enter category name' />
         </Form.Item>
 
-        <Form.Item label='Description' name='description'>
+        <Form.Item
+          label='Description'
+          name='description'
+          style={{ marginBottom: "1rem" }}>
           <Input.TextArea placeholder='Enter category description' rows={3} />
         </Form.Item>
 
@@ -63,7 +59,7 @@ const CategoryModal = ({ category, onClose, onSave }) => {
             style={{ display: "flex", justifyContent: "flex-end", gap: "8px" }}>
             <Button onClick={onClose}>Cancel</Button>
             <Button type='primary' htmlType='submit'>
-              {category ? "Update Category" : "Create Category"}
+              Update Category
             </Button>
           </div>
         </Form.Item>
@@ -72,4 +68,4 @@ const CategoryModal = ({ category, onClose, onSave }) => {
   );
 };
 
-export default CategoryModal;
+export default EditCategoryModal;
