@@ -7,9 +7,11 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
+  RadarChart,
+  PolarGrid,
+  PolarAngleAxis,
+  PolarRadiusAxis,
+  Radar,
 } from "recharts";
 import { TrendingUp, Package, ShoppingCart, AlertTriangle } from "lucide-react";
 import DashboardCard from "../../../components/Card/DashboardCard";
@@ -28,10 +30,10 @@ const salesData = [
 ];
 
 const stockData = [
-  { name: "Electronics", value: 400 },
-  { name: "Office Supplies", value: 300 },
-  { name: "Furniture", value: 300 },
-  { name: "Others", value: 200 },
+  { name: "Electronics", value: 100 },
+  { name: "Office Supplies", value: 80 },
+  { name: "Furniture", value: 50 },
+  { name: "Others", value: 150 },
 ];
 
 const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
@@ -118,24 +120,19 @@ const Analytics = () => {
           <h2 className='analytics-chart-title'>Stock Distribution</h2>
           <div className='analytics-chart-container'>
             <ResponsiveContainer width='100%' height='100%'>
-              <PieChart>
-                <Pie
-                  data={stockData}
-                  cx='50%'
-                  cy='50%'
-                  labelLine={false}
-                  outerRadius={120}
-                  fill='#8884d8'
-                  dataKey='value'>
-                  {stockData.map((entry, index) => (
-                    <Cell
-                      key={`cell-${index}`}
-                      fill={COLORS[index % COLORS.length]}
-                    />
-                  ))}
-                </Pie>
+              <RadarChart cx='50%' cy='50%' outerRadius='80%' data={stockData}>
+                <PolarGrid />
+                <PolarAngleAxis dataKey='name' />
+                <PolarRadiusAxis />
+                <Radar
+                  name='Stock'
+                  dataKey='value'
+                  stroke='#4F46E5'
+                  fill='#4F46E5'
+                  fillOpacity={0.6}
+                />
                 <Tooltip />
-              </PieChart>
+              </RadarChart>
             </ResponsiveContainer>
           </div>
         </div>

@@ -22,13 +22,14 @@ import Categories from "./pages/User-Dashboard/Categories/Categories";
 
 import "./App.css";
 import NotFound from "./components/NotFound/NotFound";
+import ForbiddenPage from "./components/NotFound/ForbiddenPage";
 import Alerts from "./pages/Alerts/Alerts";
 import Settings from "./pages/Settings/Settings";
-
+import { useToken } from "./hooks/TokenContext";
 function AnimatedRoutes() {
   const location = useLocation();
   const role = sessionStorage.getItem("role");
-
+  const { token } = useToken();
   useEffect(() => {
     const validPaths = [
       "/login",
@@ -42,6 +43,7 @@ function AnimatedRoutes() {
       "/alerts",
       "/settings",
       "/not-found",
+      "/forbidden",
     ];
     if (!validPaths.includes(location.pathname)) {
       window.location.href = "/not-found";
@@ -121,7 +123,11 @@ function AnimatedRoutes() {
               path='manage-users'
               element={
                 <PageWrapper>
-                  <ManageUsers />
+                  {role === "Admin" ? (
+                    <ManageUsers />
+                  ) : (
+                    <Navigate to='/forbidden' replace />
+                  )}
                 </PageWrapper>
               }
             />
@@ -133,7 +139,6 @@ function AnimatedRoutes() {
                 </PageWrapper>
               }
             />
-
             <Route
               path='settings'
               element={
@@ -264,10 +269,16 @@ function AnimatedRoutes() {
             />
           </Route>
         )}
-        {!role && <Route path='*' element={<Navigate to='/login' replace />} />}
-
         <Route path='/not-found' element={<NotFound />} />
-        <Route path='*' element={<Navigate to='/not-found' replace />} />
+        <Route path='/forbidden' element={<ForbiddenPage />} />
+        <Route
+          path='*'
+          element={
+            <PageWrapper>
+              <ForbiddenPage />
+            </PageWrapper>
+          }
+        />
       </Routes>
     </AnimatePresence>
   );

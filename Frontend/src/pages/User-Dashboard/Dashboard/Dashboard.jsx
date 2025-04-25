@@ -1,5 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { Package, ShoppingCart, AlertTriangle, TrendingUp } from "lucide-react";
+import {
+  Package,
+  ShoppingCart,
+  AlertTriangle,
+  TrendingUp,
+  Star,
+} from "lucide-react";
 import DashboardCard from "./../../../components/Card/DashboardCard";
 import "../Dashboard/Dashboard.css";
 import axios from "axios";
@@ -12,10 +18,14 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
 } from "recharts";
 import { baseURL } from "../../../../config.js";
 
-const chart = [
+// Dummy chart data (can be fetched from API too)
+const stockChart = [
   { name: "Jan", value: 400 },
   { name: "Feb", value: 300 },
   { name: "Mar", value: 600 },
@@ -23,13 +33,25 @@ const chart = [
   { name: "May", value: 500 },
 ];
 
+const ordersChart = [
+  { name: "Jan", orders: 100 },
+  { name: "Feb", orders: 80 },
+  { name: "Mar", orders: 120 },
+  { name: "Apr", orders: 160 },
+  { name: "May", orders: 130 },
+];
+
+const COLORS = ["#4F46E5", "#10B981", "#F59E0B", "#EF4444", "#6366F1"];
+
 const Dashboard = () => {
   const [productCount, setProductCount] = useState(0);
   const [statusCount, setStatusCount] = useState(0);
   const [lowStockItems, setLowStockItems] = useState(0);
+
   const { token } = useToken();
+
   useEffect(() => {
-    Promise.all([getProductStatus(), getStatusCount()])
+    Promise.all([getProductStatus(), getStatusCount(), getTopSellingProduct()])
       .then(([productResponse, statusResponse]) => {
         setProductCount(productResponse.data.productCount);
         setStatusCount(statusResponse.data.pending);
@@ -47,6 +69,7 @@ const Dashboard = () => {
       },
     });
   };
+
   const getStatusCount = async () => {
     return await axios.get(`${baseURL}/transactions/getTransactionStatus`, {
       headers: {
@@ -54,9 +77,19 @@ const Dashboard = () => {
       },
     });
   };
+
+  const getTopSellingProduct = async () => {
+    return await axios.get(`${baseURL}/products/top-selling`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  };
+
   return (
     <div className='dashboard-container'>
       <h1 className='dashboard-title'>Dashboard Overview</h1>
+
       <div className='card-grid'>
         <DashboardCard
           title='Total Products'
@@ -76,7 +109,7 @@ const Dashboard = () => {
           icon={AlertTriangle}
           trend={{
             value: lowStockItems,
-            isPositive: lowStockItems < 20 || false,
+            isPositive: lowStockItems < 20,
           }}
         />
         <DashboardCard
@@ -86,19 +119,47 @@ const Dashboard = () => {
           trend={{ value: 15, isPositive: true }}
         />
       </div>
+      <div className='chart-grid'>
+        <div className='chart-container'>
+          <h2 className='chart-title'>Stock Movement Trends</h2>
+          <div className='chart-box'>
+            <ResponsiveContainer width='100%' height='100%'>
+              <BarChart data={stockChart}>
+                <CartesianGrid strokeDasharray='3 3' />
+                <XAxis dataKey='name' />
+                <YAxis />
+                <Tooltip />
+                <Bar dataKey='value' fill='#4F46E5' />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
 
-      <div className='chart-container'>
-        <h2 className='chart-title'>Stock Movement Trends</h2>
-        <div className='chart-box'>
-          <ResponsiveContainer width='100%' height='100%'>
-            <BarChart data={chart}>
-              <CartesianGrid strokeDasharray='3 3' />
-              <XAxis dataKey='name' />
-              <YAxis />
-              <Tooltip />
-              <Bar dataKey='value' fill='#4F46E5' />
-            </BarChart>
-          </ResponsiveContainer>
+        <div className='chart-container'>
+          <h2 className='chart-title'>Order Volume Trends</h2>
+          <div className='chart-box'>
+            <ResponsiveContainer width='100%' height='100%'>
+              <PieChart>
+                <Pie
+                  data={ordersChart}
+                  dataKey='orders'
+                  nameKey='name'
+                  cx='50%'
+                  cy='50%'
+                  labelLine={false}
+                  outerRadius={100}
+                  fill='#8884d8'>
+                  {ordersChart.map((entry, index) => (
+                    <Cell
+                      key={`cell-${index}`}
+                      fill={COLORS[index % COLORS.length]}
+                    />
+                  ))}
+                </Pie>
+                <Tooltip />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
         </div>
       </div>
     </div>

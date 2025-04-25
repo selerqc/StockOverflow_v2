@@ -9,7 +9,7 @@ import { baseURL } from "../../../../config.js";
 const TopBar = ({ onMenuClick }) => {
   const [unreadAlerts, setUnreadAlerts] = useState(0);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
-  const { token } = useToken();
+  const { token, setToken } = useToken();
 
   const handleLogout = () => {
     axios.delete(`${baseURL}/alerts/deleteManyAlerts`, {
@@ -17,6 +17,7 @@ const TopBar = ({ onMenuClick }) => {
         Authorization: `Bearer ${token}`,
       },
     });
+    setToken(null);
     sessionStorage.removeItem("role");
     sessionStorage.removeItem("user");
   };

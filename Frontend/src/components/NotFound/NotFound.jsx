@@ -1,7 +1,9 @@
 import React from "react";
 import "../NotFound/NotFound.css";
 import { Link } from "react-router-dom";
+import { useToken } from "../../hooks/TokenContext";
 function NotFound() {
+  const { setToken } = useToken();
   return (
     <section className='nfp-section'>
       <div className='nfp-container'>
@@ -13,9 +15,17 @@ function NotFound() {
           <p className='nfp-error-message'>
             But dont worry, you can find plenty of other things on our homepage.
           </p>
-          <Link to='/login' className='nfp-home-button'>
+          <button
+            className='nfp-home-button'
+            onClick={() => {
+              setToken(null);
+              sessionStorage.removeItem("user");
+              sessionStorage.removeItem("role");
+
+              window.location.href = "/login";
+            }}>
             Back to Login Page
-          </Link>
+          </button>
         </div>
       </div>
     </section>
