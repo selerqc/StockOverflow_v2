@@ -188,13 +188,14 @@ function Login() {
       </Content>
       <Sider
         width='60%'
-        breakpoint='md'
+        breakpoint='xs'
         collapsedWidth='0'
         style={{
-          background:
-            "url(https://img.freepik.com/free-vector/tablet-login-concept-illustration_114360-7963.jpg?t=st=1745243081~exp=1745246681~hmac=19821c6b8fc9c36290962fce17ab47a3a9d58f3931e65b74df7ebdcb9c6cf1bb&w=826)",
-          backgroundSize: "cover",
+          background: "url('../src/assets/loginbg.png') ",
+          backgroundRepeat: "no-repeat",
+          backgroundSize: "contain", // Changed from "cover" to "contain"
           backgroundPosition: "center",
+          backgroundColor: "#6c46f3",
         }}></Sider>
     </Layout>
   );

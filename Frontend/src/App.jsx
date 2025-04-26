@@ -6,7 +6,7 @@ import {
   useLocation,
 } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
-import { useEffect } from "react";
+
 import "@ant-design/v5-patch-for-react-19";
 import Login from "./pages/auth/Login/Login";
 import Register from "./pages/auth/Register/Register";
@@ -25,30 +25,56 @@ import NotFound from "./components/NotFound/NotFound";
 import ForbiddenPage from "./components/NotFound/ForbiddenPage";
 import Alerts from "./pages/Alerts/Alerts";
 import Settings from "./pages/Settings/Settings";
-import { useToken } from "./hooks/TokenContext";
+
+const roleBasedRoutes = {
+  Admin: [
+    { path: "dashboard", element: <Dashboard /> },
+    { path: "analytics", element: <Analytics /> },
+    { path: "products", element: <Products /> },
+    { path: "categories", element: <Categories /> },
+    { path: "orders", element: <Orders /> },
+    { path: "manage-users", element: <ManageUsers /> },
+    { path: "alerts", element: <Alerts /> },
+    { path: "settings", element: <Settings /> },
+  ],
+  "Business Owner": [
+    { path: "dashboard", element: <Dashboard /> },
+    { path: "products", element: <Products /> },
+    { path: "categories", element: <Categories /> },
+    { path: "orders", element: <Orders /> },
+    { path: "analytics", element: <Analytics /> },
+    { path: "alerts", element: <Alerts /> },
+    { path: "settings", element: <Settings /> },
+  ],
+  Employee: [
+    { path: "dashboard", element: <Dashboard /> },
+    { path: "products", element: <Products /> },
+    { path: "categories", element: <Categories /> },
+    { path: "orders", element: <Orders /> },
+    { path: "settings", element: <Settings /> },
+  ],
+};
+
 function AnimatedRoutes() {
   const location = useLocation();
   const role = sessionStorage.getItem("role");
-  const { token } = useToken();
-  useEffect(() => {
-    const validPaths = [
-      "/login",
-      "/register",
-      "/dashboard",
-      "/analytics",
-      "/products",
-      "/categories",
-      "/orders",
-      "/manage-users",
-      "/alerts",
-      "/settings",
-      "/not-found",
-      "/forbidden",
-    ];
-    if (!validPaths.includes(location.pathname)) {
-      window.location.href = "/not-found";
-    }
-  }, [location]);
+
+  if (
+    !role &&
+    location.pathname !== "/login" &&
+    location.pathname !== "/register"
+  ) {
+    return <Navigate to='/login' replace />;
+  }
+
+  const renderRoutes = (routes) =>
+    routes.map(({ path, element }) => (
+      <Route
+        key={path}
+        path={path}
+        element={<PageWrapper>{element}</PageWrapper>}
+      />
+    ));
 
   return (
     <AnimatePresence mode='wait'>
@@ -69,8 +95,7 @@ function AnimatedRoutes() {
             </PageWrapper>
           }
         />
-
-        {role === "Admin" && (
+        {role && (
           <Route
             path='/'
             element={
@@ -78,207 +103,29 @@ function AnimatedRoutes() {
                 <Layout />
               </ProtectedRoute>
             }>
-            <Route index element={<Navigate to='/dashboard' replace />} />
-            <Route
-              path='dashboard'
-              element={
-                <PageWrapper>
-                  <Dashboard />
-                </PageWrapper>
-              }
-            />
-            <Route
-              path='analytics'
-              element={
-                <PageWrapper>
-                  <Analytics />
-                </PageWrapper>
-              }
-            />
-            <Route
-              path='products'
-              element={
-                <PageWrapper>
-                  <Products />
-                </PageWrapper>
-              }
-            />
-            <Route
-              path='categories'
-              element={
-                <PageWrapper>
-                  <Categories />
-                </PageWrapper>
-              }
-            />
-            <Route
-              path='orders'
-              element={
-                <PageWrapper>
-                  <Orders />
-                </PageWrapper>
-              }
-            />
-            <Route
-              path='manage-users'
-              element={
-                <PageWrapper>
-                  {role === "Admin" ? (
-                    <ManageUsers />
-                  ) : (
-                    <Navigate to='/forbidden' replace />
-                  )}
-                </PageWrapper>
-              }
-            />
-            <Route
-              path='alerts'
-              element={
-                <PageWrapper>
-                  <Alerts />
-                </PageWrapper>
-              }
-            />
-            <Route
-              path='settings'
-              element={
-                <PageWrapper>
-                  <Settings />
-                </PageWrapper>
-              }
-            />
+            {renderRoutes(roleBasedRoutes[role] || [])}
           </Route>
         )}
-
-        {role === "Business Owner" && (
-          <Route
-            path='/'
-            element={
-              <ProtectedRoute>
-                <Layout />
-              </ProtectedRoute>
-            }>
-            <Route index element={<Navigate to='/dashboard' replace />} />
-            <Route
-              path='dashboard'
-              element={
-                <PageWrapper>
-                  <Dashboard />
-                </PageWrapper>
-              }
-            />
-            <Route
-              path='products'
-              element={
-                <PageWrapper>
-                  <Products />
-                </PageWrapper>
-              }
-            />
-            <Route
-              path='categories'
-              element={
-                <PageWrapper>
-                  <Categories />
-                </PageWrapper>
-              }
-            />
-            <Route
-              path='orders'
-              element={
-                <PageWrapper>
-                  <Orders />
-                </PageWrapper>
-              }
-            />
-            <Route
-              path='analytics'
-              element={
-                <PageWrapper>
-                  <Analytics />
-                </PageWrapper>
-              }
-            />
-            <Route
-              path='alerts'
-              element={
-                <PageWrapper>
-                  <Alerts />
-                </PageWrapper>
-              }
-            />
-            <Route
-              path='settings'
-              element={
-                <PageWrapper>
-                  <Settings />
-                </PageWrapper>
-              }
-            />
-          </Route>
-        )}
-
-        {role === "Employee" && (
-          <Route
-            path='/'
-            element={
-              <ProtectedRoute>
-                <Layout />
-              </ProtectedRoute>
-            }>
-            <Route index element={<Navigate to='/dashboard' replace />} />
-            <Route
-              path='dashboard'
-              element={
-                <PageWrapper>
-                  <Dashboard />
-                </PageWrapper>
-              }
-            />
-            <Route
-              path='products'
-              element={
-                <PageWrapper>
-                  <Products />
-                </PageWrapper>
-              }
-            />
-            <Route
-              path='categories'
-              element={
-                <PageWrapper>
-                  <Categories />
-                </PageWrapper>
-              }
-            />
-            <Route
-              path='orders'
-              element={
-                <PageWrapper>
-                  <Orders />
-                </PageWrapper>
-              }
-            />
-            <Route
-              path='settings'
-              element={
-                <PageWrapper>
-                  <Settings />
-                </PageWrapper>
-              }
-            />
-          </Route>
-        )}
-        <Route path='/not-found' element={<NotFound />} />
-        <Route path='/forbidden' element={<ForbiddenPage />} />
         <Route
           path='*'
           element={
             <PageWrapper>
-              <ForbiddenPage />
+              <NotFound />
             </PageWrapper>
           }
         />
+        {!role && (
+          <Route
+            path='*'
+            element={
+              <PageWrapper>
+                <ForbiddenPage />
+              </PageWrapper>
+            }
+          />
+        )}
+        <Route path='/not-found' element={<NotFound />} />
+        <Route path='/forbidden' element={<ForbiddenPage />} />
       </Routes>
     </AnimatePresence>
   );

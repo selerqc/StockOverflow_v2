@@ -55,7 +55,7 @@ const OutgoingOrderModal = ({ order, onClose }) => {
       onClose();
     } catch (error) {
       console.error("Error creating outgoing order:", error);
-      message.error("Failed to create outgoing order. Please try again.");
+      message.error("Error creating outgoing order");
     }
   };
 

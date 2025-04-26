@@ -11,6 +11,7 @@ const productsRoute = require("./routes/products.route");
 const transactionRoute = require("./routes/transaction.route");
 const alertsRoute = require("./routes/alerts.route");
 const categoryRoute = require("./routes/category.route");
+const adminRoute = require("./routes/Admin/admin.route");
 
 const app = express();
 
@@ -31,6 +32,7 @@ app.use("/api/products", productsRoute);
 app.use("/api/transactions", transactionRoute);
 app.use("/api/alerts", alertsRoute);
 app.use("/api/category", categoryRoute);
+app.use("/api/admin", adminRoute);
 
 app.use(errorHandler);
 

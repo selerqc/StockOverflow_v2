@@ -23,7 +23,7 @@ const AddCategoryModal = ({ onClose, onSave }) => {
       onSave(values);
       onClose();
     } catch (error) {
-      console.error("Error adding category:", error);
+      message.error(error.response?.data?.message || "Failed to add category");
     }
   };
 

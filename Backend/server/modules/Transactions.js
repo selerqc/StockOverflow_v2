@@ -1,6 +1,6 @@
-const userModel = require("../../models/user.model");
-const productsModel = require("../../models/products.model");
-const transactionsModel = require("../../models/transaction.model");
+const userModel = require("../models/user.model");
+const productsModel = require("../models/products.model");
+const transactionsModel = require("../models/transaction.model");
 
 const transactionsController = {
   GetAllTransactions: async (req, res) => {
@@ -11,7 +11,6 @@ const transactionsController = {
       .select({
         __v: 0,
       });
-    console.log(transactions);
 
     const products = await productsModel
       .find({
@@ -88,6 +87,25 @@ const transactionsController = {
   CreateOutgoingOrder: async (req, res) => {
     const { product_id, name, stock_level, total_price } = req.body;
 
+    const product = await productsModel.findOne(
+      {
+        _id: product_id,
+        user_id: req.user._id,
+      },
+      {
+        stock_level: 1,
+      }
+    );
+
+    if (!product) {
+      return res.status(404).json({
+        message: "Product not found",
+        status: "error",
+      });
+    }
+
+    if (product.stock_level < stock_level) throw "Insufficient stock ";
+
     await transactionsModel.create({
       product_id: product_id,
       user_id: req.user._id,
@@ -96,10 +114,12 @@ const transactionsController = {
       stock_level: stock_level,
       total_price: total_price,
     });
+
     await productsModel.updateOne(
       { _id: product_id, user_id: req.user._id },
       { $inc: { stock_level: -stock_level } }
     );
+
     res.status(201).json({
       message: "outgoing order created successfully",
       status: "success",

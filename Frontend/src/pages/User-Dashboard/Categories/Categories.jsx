@@ -23,7 +23,7 @@ const Categories = () => {
   const [loading, setLoading] = useState(true);
   const { token } = useToken();
   const { Title, Text } = Typography;
-
+  const role = sessionStorage.getItem("role");
   useEffect(() => {
     fetchCategories();
     const interval = setInterval(fetchCategories, 1000);
@@ -37,18 +37,33 @@ const Categories = () => {
   }, []);
 
   const fetchCategories = async () => {
-    await axios
-      .get(`${baseURL}/category/getCategory`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then((response) => {
-        setCategories(response.data.getCategory);
-      })
-      .catch((error) => {
-        console.error("Error fetching categories:", error);
-      });
+    if (role === "Admin") {
+      await axios
+        .get(`${baseURL}/admin/getAllCategories`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        .then((response) => {
+          setCategories(response.data.data);
+        })
+        .catch((error) => {
+          console.error("Error fetching categories:", error);
+        });
+    } else {
+      await axios
+        .get(`${baseURL}/category/getCategory`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        .then((response) => {
+          setCategories(response.data.getCategory);
+        })
+        .catch((error) => {
+          console.error("Error fetching categories:", error);
+        });
+    }
   };
   const handleAddCategory = () => {
     setSelectedCategory(undefined);

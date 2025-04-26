@@ -57,9 +57,14 @@ const Register = () => {
           <p className='title'>StockOverflow</p>
         </div>
         <Row justify='center' align='middle' style={{ height: "100%" }}>
-          <Col xs={18}>
+          <Col xs={20}>
             <div className='registration-box'>
-              <Title level={3} style={{ fontWeight: 700, fontSize: "2.5rem" }}>
+              <Title
+                level={3}
+                style={{
+                  fontWeight: 700,
+                  fontSize: "2.5rem",
+                }}>
                 Create an account
               </Title>
               <Text>
@@ -223,10 +228,11 @@ const Register = () => {
       <Sider
         width='60%'
         style={{
-          backgroundImage:
-            "url('https://img.freepik.com/free-vector/forms-concept-illustration_114360-4957.jpg?t=st=1744857586~exp=1744861186~hmac=4294f0f1655b65c6f338bef4cff4b987460065b5804ea8045cfe2be92d22c995&w=740')",
+          backgroundImage: "url('../src/assets/register.png')",
+          backgroundRepeat: "no-repeat",
           backgroundSize: "contain",
           backgroundPosition: "center",
+          backgroundColor: "#4f46e5",
         }}
         breakpoint='md'
         collapsedWidth='0'

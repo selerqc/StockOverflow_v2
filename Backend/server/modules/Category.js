@@ -1,9 +1,14 @@
-const categoryModel = require("../../models/category.model");
+const categoryModel = require("../models/category.model");
 
 const CategoryController = {
   AddCategory: async (req, res) => {
     const { name, description } = req.body;
 
+    const findDuplicateName = await categoryModel.findOne({
+      user_id: req.user._id,
+      name: name,
+    });
+    if (findDuplicateName) throw "Category already exists";
     const newCategory = await categoryModel.create({
       user_id: req.user._id,
       name,
@@ -18,9 +23,7 @@ const CategoryController = {
   },
 
   GetAllCategory: async (req, res) => {
-    const getCategory = await categoryModel.find({
-      user_id: req.user._id,
-    });
+    const getCategory = await categoryModel.find({});
 
     res.status(200).json({
       status: "success",

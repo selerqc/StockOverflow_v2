@@ -1,4 +1,4 @@
-const productsModel = require("../../models/products.model");
+const productsModel = require("../models/products.model");
 
 const validator = require("validator");
 
@@ -74,6 +74,30 @@ const ProductsController = {
       status: "success",
       message: "Product added successfully",
       product: addProduct.createdAt,
+    });
+  },
+  AddManyProducts: async (req, res) => {
+    const products = Array.isArray(req.body) ? req.body : [];
+    console.log(products);
+    if (!products || products.length === 0) throw "Products are required";
+
+    const productsToAdd = products.map((product) => {
+      const { name, price, category_id, stock_level, sku } = product;
+
+      return productsModel.create({
+        user_id: req.user._id,
+        category_id: category_id,
+        name: name,
+        price: price,
+        stock_level: stock_level,
+        sku: sku,
+      });
+    });
+    await Promise.all(productsToAdd);
+    res.status(201).json({
+      status: "success",
+      message: "Products added successfully",
+      products: products,
     });
   },
 

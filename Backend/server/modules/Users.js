@@ -1,6 +1,6 @@
-const userModel = require("../../models/user.model");
-const productsModel = require("../../models/products.model");
-const transactionsModel = require("../../models/transaction.model");
+const userModel = require("../models/user.model");
+const productsModel = require("../models/products.model");
+const transactionsModel = require("../models/transaction.model");
 const userController = {
   CreateUser: async (req, res) => {
     const { username, email, phone, password, confirm_password } = req.body;

@@ -1,7 +1,7 @@
 const express = require("express");
 const auth = require("../middleware/auth");
 
-const Alerts = require("../modules/alerts/Alerts");
+const Alerts = require("../modules/Alerts");
 
 const alertsRoute = express.Router();
 

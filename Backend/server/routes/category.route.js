@@ -1,7 +1,7 @@
 const express = require("express");
 const auth = require("../middleware/auth");
 
-const Category = require("../modules/category/Category");
+const Category = require("../modules/Category");
 const categoryRoute = express.Router();
 
 categoryRoute.use(auth);

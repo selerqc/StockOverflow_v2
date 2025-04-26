@@ -20,7 +20,7 @@ const Products = () => {
   const [selectedProduct, setSelectedProduct] = useState(undefined);
   const [loading, setLoading] = useState(true);
   const { token } = useToken();
-
+  const role = sessionStorage.getItem("role");
   useEffect(() => {
     fetchProducts();
     const interval = setInterval(fetchProducts, 1000);
@@ -28,19 +28,35 @@ const Products = () => {
   }, []);
 
   const fetchProducts = async () => {
-    await axios
-      .get(`${baseURL}/products/getProduct`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then((response) => {
-        setProducts(response.data.product);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error("Error fetching products:", error);
-      });
+    if (role === "Admin") {
+      await axios
+        .get(`${baseURL}/admin/getAllProducts`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        .then((response) => {
+          setProducts(response.data.data);
+          setLoading(false);
+        })
+        .catch((error) => {
+          console.error("Error fetching products:", error);
+        });
+    } else {
+      await axios
+        .get(`${baseURL}/products/getProduct`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        .then((response) => {
+          setProducts(response.data.product);
+          setLoading(false);
+        })
+        .catch((error) => {
+          console.error("Error fetching products:", error);
+        });
+    }
   };
 
   const handleAddProduct = () => {
@@ -102,6 +118,17 @@ const Products = () => {
   ];
 
   const columns = [
+    ...(role === "Admin"
+      ? [
+          {
+            title: "Added by",
+            dataIndex: "user_id",
+            key: "user_id",
+            render: (text) => `#${text.slice(0, 5)}...`,
+          },
+        ]
+      : []),
+
     {
       title: "Name",
       dataIndex: "name",

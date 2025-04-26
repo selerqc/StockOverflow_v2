@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const alertModel = require("../../models/alert.model");
+const alertModel = require("../models/alert.model");
 const AlertsController = {
   GetAllAlerts: async (req, res) => {
     const alerts = await alertModel.find({}).select({

@@ -27,17 +27,32 @@ const Orders = () => {
   const [orderType, setOrderType] = useState("outgoing");
   const [loading, setLoading] = useState(true);
   const { token } = useToken();
-
+  const role = sessionStorage.getItem("role");
   const getTransactions = async () => {
-    await axios
-      .get(`${baseURL}/transactions/getTransactions`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then((response) => {
-        setOrders(response.data.data);
-      });
+    if (role === "Admin") {
+      await axios
+        .get(`${baseURL}/admin/getAllTransactions`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        .then((response) => {
+          setOrders(response.data.data);
+        })
+        .catch((error) => {
+          console.error("Error fetching transactions:", error);
+        });
+    } else {
+      await axios
+        .get(`${baseURL}/transactions/getTransactions`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        .then((response) => {
+          setOrders(response.data.data);
+        });
+    }
   };
 
   useEffect(() => {
@@ -101,6 +116,17 @@ const Orders = () => {
   });
 
   const columns = [
+    ...(role === "Admin"
+      ? [
+          {
+            title: "User ID",
+            dataIndex: "user_id",
+            key: "user_id",
+            render: (text) => `#${text.slice(0, 5)}...`,
+          },
+        ]
+      : []),
+
     {
       title: "Order ID",
       dataIndex: "_id",
@@ -203,7 +229,7 @@ const Orders = () => {
             prefix={<SearchOutlined />}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            style={{ width: 300, marginRight: 16 }}
+            style={{ width: "100%", marginRight: 16 }}
           />
           <Select
             value={filterStatus}

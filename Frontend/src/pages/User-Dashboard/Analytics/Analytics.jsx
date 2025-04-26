@@ -43,6 +43,7 @@ const Analytics = () => {
   const [statusCount, setStatusCount] = useState(0);
   const [lowStockItems, setLowStockItems] = useState(0);
   const { token } = useToken();
+  const role = sessionStorage.getItem("role");
   useEffect(() => {
     Promise.all([getProductStatus(), getStatusCount()])
       .then(([productResponse, statusResponse]) => {
@@ -56,18 +57,34 @@ const Analytics = () => {
   }, []);
 
   const getProductStatus = async () => {
-    return await axios.get(`${baseURL}/products/getProductStatus`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    if (role === "Admin") {
+      return await axios.get(`${baseURL}/admin/getAllProducts`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+    } else {
+      return await axios.get(`${baseURL}/products/getProductStatus`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+    }
   };
   const getStatusCount = async () => {
-    return await axios.get(`${baseURL}/transactions/getTransactionStatus`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    if (role === "Admin") {
+      return await axios.get(`${baseURL}/admin/getAllTransactions`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+    } else {
+      return await axios.get(`${baseURL}/transactions/getTransactionStatus`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+    }
   };
   return (
     <div className='analytics-container'>
