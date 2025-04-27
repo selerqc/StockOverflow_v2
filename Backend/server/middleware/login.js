@@ -24,6 +24,7 @@ const login = async (req, res) => {
     message: " Logged in successfully",
     accessToken: accessToken,
     data: {
+      _id: getUser._id,
       username: getUser.username,
       email: getUser.email,
       phone: getUser.phone,

@@ -10,7 +10,7 @@ const TopBar = ({ onMenuClick }) => {
   const [unreadAlerts, setUnreadAlerts] = useState(0);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const { token, setToken } = useToken();
-
+  const role = sessionStorage.getItem("role");
   const handleLogout = () => {
     axios
       .delete(`${baseURL}/alerts/deleteManyAlerts`, {
@@ -85,12 +85,13 @@ const TopBar = ({ onMenuClick }) => {
 
             {isProfileOpen && (
               <div className='profile-menu'>
-                <Link to='/settings' className='profile-menu-item'>
-                  Settings
-                </Link>
-
+                {role === "Admin" && (
+                  <Link to='/settings' className='profile-menu-item'>
+                    Settings
+                  </Link>
+                )}
                 <Link to='/login' className='profile-menu-item'>
-                  <span onClick={handleLogout}> Log out </span>
+                  <span onClick={handleLogout}>Log out</span>
                 </Link>
               </div>
             )}

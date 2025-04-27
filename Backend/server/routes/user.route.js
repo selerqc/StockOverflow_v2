@@ -8,7 +8,10 @@ const User = require("../modules/Users");
 //routes
 const userRoute = new express.Router();
 
-userRoute.post("/register", register).post("/login", login);
+userRoute
+  .post("/register", register)
+  .post("/login", login)
+  .patch("/updateLastLogin/:id", User.UpdateLastLogin);
 //middleware
 //everything under the authentication will be controlled
 

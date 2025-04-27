@@ -57,6 +57,28 @@ const userController = {
       user: updatedUser,
     });
   },
+
+  UpdateLastLogin: async (req, res) => {
+    try {
+      const updatedUser = await userModel.findOneAndUpdate(
+        { _id: req.params.id },
+        {
+          updatedAt: Date.now(),
+        }
+      );
+      return res.status(200).json({
+        status: "success",
+        message: "Last login updated successfully",
+        data: updatedUser,
+      });
+    } catch (error) {
+      return res.status(500).json({
+        status: "error",
+        message: "Error updating last login",
+        error: error.message,
+      });
+    }
+  },
   UserDashboard: async (req, res) => {
     const getUser = await userModel
       .findOne({

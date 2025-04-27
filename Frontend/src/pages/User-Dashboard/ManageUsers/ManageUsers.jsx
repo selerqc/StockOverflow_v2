@@ -103,9 +103,9 @@ const ManageUsers = () => {
     },
     {
       title: "Last Login",
-      dataIndex: "createdAt",
-      key: "createdAt",
-      render: (createdAt) => new Date(createdAt).toLocaleString(),
+      dataIndex: "updatedAt",
+      key: "updatedAt",
+      render: (updatedAt) => new Date(updatedAt).toLocaleString(),
     },
     {
       title: "Actions",

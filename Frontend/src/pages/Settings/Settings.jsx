@@ -9,12 +9,18 @@ import {
 } from "@ant-design/icons";
 import axios from "axios";
 import { baseURL } from "../../../config.js";
-
+import { useToken } from "../../hooks/TokenContext.jsx";
 import useFetch from "../../hooks/useFetch";
 
 const { TabPane } = Tabs;
 
 const Settings = () => {
+  const { token } = useToken();
+  const [exportData, setExportData] = useState({
+    products: [],
+    categories: [],
+    orders: [],
+  });
   const [userData, setUserData] = useState({
     username: " ",
     email: " ",
@@ -32,11 +38,6 @@ const Settings = () => {
   }, [data, error]);
 
   const initialSettings = {
-    company: {
-      name: "StockOverflow Inc.",
-      email: "contact@stockoverflow.com",
-      phone: "(555) 123-4567",
-    },
     display: {
       timezone: "UTC-5",
     },
@@ -55,21 +56,60 @@ const Settings = () => {
     console.log("Settings saved:", settings);
     message.success("Settings saved successfully!");
   };
+  const getAllProducts = async () => {
+    try {
+      const response = await axios.get(`${baseURL}/admin/getAllProducts`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching products:", error);
+      throw error;
+    }
+  };
+  const getAllCategories = async () => {
+    try {
+      const response = await axios.get(`${baseURL}/admin/getAllCategories`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+      throw error;
+    }
+  };
+  const getAllOrders = async () => {
+    try {
+      const response = await axios.get(`${baseURL}/admin/getAllTransactions`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching orders:", error);
+      throw error;
+    }
+  };
 
   const handleExportData = () => {
-    const data = {
-      products: [
-        { id: "1", name: "Office Chair", stock: 24, price: 199.99 },
-        { id: "2", name: "Standing Desk", stock: 15, price: 349.99 },
-      ],
-      categories: [
-        { id: "1", name: "Furniture" },
-        { id: "2", name: "Electronics" },
-      ],
-      orders: [{ id: "ORD-001", date: "2025-04-10", status: "completed" }],
-    };
+    Promise.all([getAllProducts(), getAllCategories(), getAllOrders()]).then(
+      ([products, categories, orders]) => {
+        const exportData = {
+          products: products.data,
+          categories: categories.data,
+          orders: orders.data,
+        };
+        console.log("Exported Data:", exportData);
+        setExportData(exportData);
+      }
+    );
 
-    const blob = new Blob([JSON.stringify(data, null, 2)], {
+    const blob = new Blob([JSON.stringify(exportData, null, 2)], {
       type: "application/json",
     });
     const url = URL.createObjectURL(blob);
@@ -109,6 +149,7 @@ const Settings = () => {
                     company: { ...settings.company, name: e.target.value },
                   })
                 }
+                style={{ marginBottom: "1rem" }}
               />
             </div>
             <div className='form-group'>
@@ -122,6 +163,7 @@ const Settings = () => {
                     company: { ...settings.company, email: e.target.value },
                   })
                 }
+                style={{ marginBottom: "1rem" }}
               />
             </div>
             <div className='form-group'>
@@ -130,6 +172,7 @@ const Settings = () => {
                 type='tel'
                 value={userData.phone || "No phone number"}
                 disabled
+                style={{ marginBottom: "1rem" }}
               />
             </div>
             <div className='form-group'>
@@ -141,7 +184,8 @@ const Settings = () => {
                     ...settings,
                     display: { ...settings.display, timezone: value },
                   })
-                }>
+                }
+                style={{ marginBottom: "1rem" }}>
                 <Select.Option value='UTC-8'>
                   UTC-8 (Pacific Time)
                 </Select.Option>

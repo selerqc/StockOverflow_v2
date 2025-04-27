@@ -1,7 +1,6 @@
 const productsModel = require("../../models/products.model");
 const transactionsModel = require("../../models/transaction.model");
 const categoryModel = require("../../models/category.model");
-const { GetAllTransactions, TransactionStatus } = require("../Transactions");
 
 const AdminController = {
   GetAllProducts: async (req, res) => {

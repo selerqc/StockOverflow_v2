@@ -25,7 +25,7 @@ function Login() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { setToken } = useToken();
+  const { setToken, token } = useToken();
 
   const handleLogin = async () => {
     setLoading(true);
@@ -46,6 +46,7 @@ function Login() {
         message.success(
           `Login successful, Welcome back ${response.data.data.username}`
         );
+        updateLastLogin(response.data.data._id);
         setTimeout(() => {
           navigate("/dashboard");
         }, 3000);
@@ -62,7 +63,20 @@ function Login() {
     setPassword(values.password);
     handleLogin();
   };
-
+  const updateLastLogin = async (id) => {
+    await axios
+      .patch(`${baseURL}/users/updateLastLogin/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((response) => {
+        console.log(response.data);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
   return (
     <Layout style={{ height: "100vh" }}>
       <Content style={{ backgroundColor: "white", padding: "3rem" }}>

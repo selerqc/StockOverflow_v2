@@ -2,99 +2,147 @@ const mongoose = require("mongoose");
 const alertModel = require("../models/alert.model");
 const AlertsController = {
   GetAllAlerts: async (req, res) => {
-    const alerts = await alertModel.find({}).select({
-      _v: 0,
-    });
+    try {
+      const alerts = await alertModel.find({}).select({
+        _v: 0,
+      });
 
-    const getUnreadAlerts = await alertModel.countDocuments({
-      is_read: false,
-      user_id: req.user._id,
-    });
+      const getUnreadAlerts = await alertModel.countDocuments({
+        is_read: false,
+        user_id: req.user._id,
+      });
 
-    res.status(200).json({
-      status: "success",
-      message: "Alerts retrieved successfully",
-      data: alerts,
-      unreadAlerts: getUnreadAlerts,
-    });
+      res.status(200).json({
+        status: "success",
+        message: "Alerts retrieved successfully",
+        data: alerts,
+        unreadAlerts: getUnreadAlerts,
+      });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({
+        status: "error",
+        message: error.message,
+      });
+    }
   },
 
   GetUnreadCount: async (req, res) => {
-    const unreadCount = await alertModel.countDocuments({
-      user_id: req.user._id,
-      is_read: false,
-    });
-    res.status(200).json({
-      status: "Unread Count",
-      unreadCount,
-    });
+    try {
+      const unreadCount = await alertModel.countDocuments({
+        user_id: req.user._id,
+        is_read: false,
+      });
+      res.status(200).json({
+        status: "Unread Count",
+        unreadCount,
+      });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({
+        status: "error",
+        message: error.message,
+      });
+    }
   },
 
   AddNewAlert: async (req, res) => {
-    const { type, message, priority, date } = req.body;
+    try {
+      const { type, message, priority, date } = req.body;
 
-    const addAlert = await alertModel.create({
-      user_id: req.user._id,
-      type,
-      message,
-      date: date,
-      is_read: false,
-      priority: priority,
-    });
+      const addAlert = await alertModel.create({
+        user_id: req.user._id,
+        type,
+        message,
+        date: date,
+        is_read: false,
+        priority: priority,
+      });
 
-    res.status(201).json({
-      status: "success",
-      message: "Alert added successfully",
-      addAlert,
-    });
+      res.status(201).json({
+        status: "success",
+        message: "Alert added successfully",
+        addAlert,
+      });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({
+        status: "error",
+        message: error.message,
+      });
+    }
   },
 
   UpdateOneAlert: async (req, res) => {
-    const { is_read } = req.body;
+    try {
+      const { is_read } = req.body;
 
-    const updateAlert = await alertModel.findOneAndUpdate(
-      { _id: req.params.id },
-      {
-        is_read: is_read,
-      },
-      {
-        new: true,
-      }
-    );
+      const updateAlert = await alertModel.findOneAndUpdate(
+        { _id: req.params.id },
+        {
+          is_read: is_read,
+        },
+        {
+          new: true,
+        }
+      );
 
-    res.status(200).json({
-      status: "success",
-      message: "Alert updated successfully",
-      updateAlert,
-    });
+      res.status(200).json({
+        status: "success",
+        message: "Alert updated successfully",
+        updateAlert,
+      });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({
+        status: "error",
+        message: error.message,
+      });
+    }
   },
 
   UpdateManyAlert: async (req, res) => {
-    const { ids } = req.body;
+    try {
+      const { ids } = req.body;
 
-    const updatedAlerts = await alertModel.updateMany(
-      { _id: { $in: ids } },
-      { is_read: true },
-      { new: true }
-    );
+      const updatedAlerts = await alertModel.updateMany(
+        { _id: { $in: ids } },
+        { is_read: true },
+        { new: true }
+      );
 
-    res.status(200).json({
-      status: "success",
-      message: "Alerts updated successfully",
-      updatedAlerts,
-    });
+      res.status(200).json({
+        status: "success",
+        message: "Alerts updated successfully",
+        updatedAlerts,
+      });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({
+        status: "error",
+        message: error.message,
+      });
+    }
   },
 
   DeleteManyAlert: async (req, res) => {
-    const deleteResult = await alertModel.deleteMany({
-      user_id: req.user._id,
-    });
+    try {
+      const deleteResult = await alertModel.deleteMany({
+        user_id: req.user._id,
+      });
 
-    res.status(200).json({
-      status: "success",
-      message: "Alerts deleted successfully",
-      deleteResult,
-    });
+      res.status(200).json({
+        status: "success",
+        message: "Alerts deleted successfully",
+        deleteResult,
+      });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({
+        status: "error",
+        message: error.message,
+      });
+    }
   },
 };
 

@@ -25,7 +25,6 @@ import NotFound from "./components/NotFound/NotFound";
 import ForbiddenPage from "./components/NotFound/ForbiddenPage";
 import Alerts from "./pages/Alerts/Alerts";
 import Settings from "./pages/Settings/Settings";
-
 const roleBasedRoutes = {
   Admin: [
     { path: "dashboard", element: <Dashboard /> },
