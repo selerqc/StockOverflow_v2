@@ -10,7 +10,7 @@ const AdminController = {
       .select("-__v");
 
     const lowStockCount = await productsModel.countDocuments({
-      stock_level: { $lte: 10 },
+      stock_level: { $lte: 20 },
     });
 
     res.status(200).json({
