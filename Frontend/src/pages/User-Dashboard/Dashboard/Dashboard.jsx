@@ -106,13 +106,13 @@ const Dashboard = () => {
             title='Total Products'
             value={productCount}
             icon={Package}
-            trend={{ value: productCount, isPositive: productCount > 50 }}
+            trend={{ value: productCount, isPositive: productCount >= 50 }}
           />
           <DashboardCard
             title='Pending Orders'
             value={statusCount}
             icon={ShoppingCart}
-            trend={{ value: statusCount, isPositive: statusCount > 20 }}
+            trend={{ value: statusCount, isPositive: statusCount > 5 }}
           />
           <DashboardCard
             title='Low Stock Items'

@@ -64,6 +64,25 @@ const CategoryController = {
       category: deletedCategory,
     });
   },
+  AddManyCategory: async (req, res) => {
+    const categories = Array.isArray(req.body) ? req.body : [];
+    console.log(categories);
+    const newCategories = await categories.map((category) => {
+      const { name, description } = category;
+
+      return categoryModel.create({
+        user_id: req.user._id,
+        name,
+        description,
+      });
+    });
+
+    res.status(201).json({
+      status: "success",
+      message: "Categories added successfully",
+      data: newCategories,
+    });
+  },
 };
 
 module.exports = CategoryController;

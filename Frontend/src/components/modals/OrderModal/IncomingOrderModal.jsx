@@ -49,7 +49,7 @@ const OrderModal = ({ order, onClose }) => {
         },
       });
 
-      message.success(alertMessage);
+      message.success(`Incoming Order ${formData.name} created successfully`);
       onClose();
     } catch (error) {
       console.error("Error creating incoming order:", error);
