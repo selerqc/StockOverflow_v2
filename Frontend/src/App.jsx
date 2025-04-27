@@ -37,7 +37,6 @@ const roleBasedRoutes = {
     { path: "settings", element: <Settings /> },
   ],
   "Business Owner": [
-    { path: "dashboard", element: <Dashboard /> },
     { path: "products", element: <Products /> },
     { path: "categories", element: <Categories /> },
     { path: "orders", element: <Orders /> },
@@ -46,7 +45,6 @@ const roleBasedRoutes = {
     { path: "settings", element: <Settings /> },
   ],
   Employee: [
-    { path: "dashboard", element: <Dashboard /> },
     { path: "products", element: <Products /> },
     { path: "categories", element: <Categories /> },
     { path: "orders", element: <Orders /> },

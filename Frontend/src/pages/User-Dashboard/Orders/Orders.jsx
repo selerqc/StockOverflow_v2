@@ -2,13 +2,9 @@ import React, { useState, useEffect } from "react";
 import {
   ArrowUpOutlined,
   ArrowDownOutlined,
-  ClockCircleOutlined,
-  CheckCircleOutlined,
-  CloseCircleOutlined,
-  SearchOutlined,
-  FilterOutlined,
+  HomeFilled,
 } from "@ant-design/icons";
-import { Button, Table, Select, Input, Skeleton, Modal } from "antd";
+import { Button, Table, Select, Skeleton, Tabs } from "antd";
 import axios from "axios";
 import { useToken } from "../../../hooks/TokenContext";
 import { baseURL } from "../../../../config.js";
@@ -19,15 +15,17 @@ import "./Orders.css";
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
+
   const [filterStatus, setFilterStatus] = useState("all");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(undefined);
   const [orderType, setOrderType] = useState("outgoing");
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState("all");
   const { token } = useToken();
   const role = sessionStorage.getItem("role");
+
   const getTransactions = async () => {
     if (role === "Admin") {
       await axios
@@ -84,20 +82,10 @@ const Orders = () => {
 
     setOrders(updatedOrders);
 
-    const newAlert = {
-      type: "info",
-      message: `Order #${orderId} status changed to ${newStatus}`,
-      date: new Date().toISOString(),
-      is_read: false,
-      priority: "low",
-    };
+    await updateOneTransactions(orderId, newStatus);
+  };
 
-    await axios.post(`${baseURL}/alerts/addAlerts`, newAlert, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
+  const updateOneTransactions = async (orderId, newStatus) => {
     await axios.patch(
       `${baseURL}/transactions/updateOneTransactions/${orderId}`,
       { status: newStatus },
@@ -107,6 +95,23 @@ const Orders = () => {
         },
       }
     );
+
+    const newAlert = {
+      type: "info",
+      message: `Order #${orderId} status changed to ${newStatus}`,
+      date: new Date().toISOString(),
+      is_read: false,
+      priority: "low",
+    };
+    addNewAlert(newAlert);
+  };
+
+  const addNewAlert = async (newAlert) => {
+    await axios.post(`${baseURL}/alerts/addAlerts`, newAlert, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
   };
 
   const filteredOrders = orders.filter((order) => {
@@ -195,6 +200,18 @@ const Orders = () => {
     },
   ];
 
+  const handleTabChange = (key) => {
+    setActiveTab(key);
+    setFilterStatus(key);
+  };
+
+  const tabItems = [
+    { key: "all", label: "All Orders" },
+    { key: "pending", label: "Pending" },
+    { key: "completed", label: "Completed" },
+    { key: "cancelled", label: "Cancelled" },
+  ];
+
   useEffect(() => {
     const timer = setTimeout(() => {
       setLoading(false);
@@ -206,6 +223,7 @@ const Orders = () => {
     <div className='orders-container'>
       <div className='header'>
         <h1 className='title'>Order Management</h1>
+
         <div className='action-buttons'>
           <Button
             type='primary'
@@ -222,26 +240,9 @@ const Orders = () => {
         </div>
       </div>
 
+      <Tabs activeKey={activeTab} onChange={handleTabChange} items={tabItems} />
+
       <div className='orders-panel'>
-        <div className='order-filters'>
-          <Input
-            placeholder='Search orders...'
-            prefix={<SearchOutlined />}
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            style={{ width: "100%", marginRight: 16 }}
-          />
-          <Select
-            value={filterStatus}
-            onChange={(value) => setFilterStatus(value)}
-            style={{ width: 200 }}
-            suffixIcon={<FilterOutlined />}>
-            <Select.Option value='all'>All Status</Select.Option>
-            <Select.Option value='pending'>Pending</Select.Option>
-            <Select.Option value='completed'>Completed</Select.Option>
-            <Select.Option value='cancelled'>Cancelled</Select.Option>
-          </Select>
-        </div>
         {loading ? (
           <Skeleton active />
         ) : (

@@ -172,7 +172,13 @@ const Categories = () => {
                   />
                 </>
               }>
-              <Title level={5} style={{ marginTop: "0rem" }}>
+              <Title
+                level={5}
+                style={{
+                  marginTop: "0rem",
+                  fontWeight: "400",
+                  fontSize: "0.9rem",
+                }}>
                 Product Description: {category.description}
               </Title>
               <Text type='secondary'>

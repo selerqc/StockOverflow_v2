@@ -102,7 +102,7 @@ const Analytics = () => {
           title='Total Products'
           value={productCount}
           icon={Package}
-          trend={{ value: productCount, isPositive: productCount > 50 }}
+          trend={{ value: productCount, isPositive: productCount >= 50 }}
         />
         <DashboardCard
           title='Total Orders'
@@ -114,7 +114,7 @@ const Analytics = () => {
           title='Low Stock Items'
           value={lowStockItems}
           icon={AlertTriangle}
-          trend={{ value: lowStockItems, isPositive: lowStockItems < 20 }}
+          trend={{ value: lowStockItems, isPositive: lowStockItems > 20 }}
         />
       </div>
 
