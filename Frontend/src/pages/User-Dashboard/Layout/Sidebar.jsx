@@ -106,6 +106,9 @@ const Sidebar = ({ isOpen }) => {
             <NavLink to='/orders' icon={ShoppingCart}>
               Orders
             </NavLink>
+            <NavLink to='/alerts' icon={AlertCircle}>
+              Alerts
+            </NavLink>
           </>
         );
 

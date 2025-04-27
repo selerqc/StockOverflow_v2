@@ -48,7 +48,11 @@ function Login() {
         );
         updateLastLogin(response.data.data._id);
         setTimeout(() => {
-          navigate("/dashboard");
+          {
+            sessionStorage.getItem("role") === "Admin"
+              ? navigate("/dashboard")
+              : navigate("/products");
+          }
         }, 3000);
       })
       .catch((error) => {

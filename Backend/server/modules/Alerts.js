@@ -3,9 +3,13 @@ const alertModel = require("../models/alert.model");
 const AlertsController = {
   GetAllAlerts: async (req, res) => {
     try {
-      const alerts = await alertModel.find({}).select({
-        _v: 0,
-      });
+      const alerts = await alertModel
+        .find({
+          user_id: req.user._id,
+        })
+        .select({
+          _v: 0,
+        });
 
       const getUnreadAlerts = await alertModel.countDocuments({
         is_read: false,

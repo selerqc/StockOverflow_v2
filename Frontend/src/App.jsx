@@ -42,13 +42,12 @@ const roleBasedRoutes = {
     { path: "orders", element: <Orders /> },
     { path: "analytics", element: <Analytics /> },
     { path: "alerts", element: <Alerts /> },
-    { path: "settings", element: <Settings /> },
   ],
   Employee: [
     { path: "products", element: <Products /> },
     { path: "categories", element: <Categories /> },
+    { path: "alerts", element: <Alerts /> },
     { path: "orders", element: <Orders /> },
-    { path: "settings", element: <Settings /> },
   ],
 };
 
