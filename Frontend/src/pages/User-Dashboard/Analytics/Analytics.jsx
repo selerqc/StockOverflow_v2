@@ -20,6 +20,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { useToken } from "../../../hooks/TokenContext";
 import { baseURL } from "../../../../config.js";
+
 const salesData = [
   { month: "Jan", sales: 4000 },
   { month: "Feb", sales: 3000 },

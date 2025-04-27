@@ -15,6 +15,10 @@ const ViewOrderDetails = ({ order, visible, onClose }) => {
         </Button>,
       ]}>
       <Descriptions bordered column={1}>
+        <Descriptions.Item label='Order ID'>{order._id}</Descriptions.Item>
+        <Descriptions.Item label='Ordered By'>
+          {order.user_id}
+        </Descriptions.Item>
         <Descriptions.Item label='Product Name'>{order.name}</Descriptions.Item>
         <Descriptions.Item label='Quantity'>
           {order.stock_level}

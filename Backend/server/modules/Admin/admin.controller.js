@@ -8,6 +8,7 @@ const AdminController = {
       .find({})
       .populate("category_id", "name")
       .select("-__v");
+
     const lowStockCount = await productsModel.countDocuments({
       stock_level: { $lte: 10 },
     });

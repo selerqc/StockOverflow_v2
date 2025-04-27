@@ -119,10 +119,10 @@ const Orders = () => {
     ...(role === "Admin"
       ? [
           {
-            title: "User ID",
+            title: "Ordered By",
             dataIndex: "user_id",
             key: "user_id",
-            render: (text) => `#${text.slice(0, 5)}...`,
+            render: (text) => `#${text.slice(0, 9)}...`,
           },
         ]
       : []),
@@ -145,9 +145,9 @@ const Orders = () => {
       render: (type) => (
         <span>
           {type === "incoming" ? (
-            <ArrowUpOutlined style={{ color: "green" }} />
+            <ArrowDownOutlined style={{ color: "green" }} />
           ) : (
-            <ArrowDownOutlined style={{ color: "blue" }} />
+            <ArrowUpOutlined style={{ color: "blue" }} />
           )}
           {type.charAt(0).toUpperCase() + type.slice(1)}
         </span>
@@ -209,13 +209,13 @@ const Orders = () => {
         <div className='action-buttons'>
           <Button
             type='primary'
-            icon={<ArrowDownOutlined />}
+            icon={<ArrowUpOutlined />}
             onClick={() => handleNewOrder("outgoing")}>
             New Outgoing Order
           </Button>
           <Button
             type='default'
-            icon={<ArrowUpOutlined />}
+            icon={<ArrowDownOutlined />}
             onClick={() => handleNewOrder("incoming")}>
             New Incoming Order
           </Button>
