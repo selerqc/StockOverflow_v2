@@ -1,21 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { Tabs, Input, Select, Switch, Button, message } from "antd";
-import {
-  SaveOutlined,
-  UserOutlined,
-  BellOutlined,
-  DatabaseOutlined,
-  LockOutlined,
-} from "@ant-design/icons";
+import { Input, Select, Switch, Button, message, Card, Row, Col } from "antd";
+import { SaveOutlined } from "@ant-design/icons";
 import axios from "axios";
 import { baseURL } from "../../../config.js";
 import { useToken } from "../../hooks/TokenContext.jsx";
 import useFetch from "../../hooks/useFetch";
 
-const { TabPane } = Tabs;
-
 const Settings = () => {
   const { token } = useToken();
+
   const [exportData, setExportData] = useState({
     products: [],
     categories: [],
@@ -38,9 +31,6 @@ const Settings = () => {
   }, [data, error]);
 
   const initialSettings = {
-    display: {
-      timezone: "UTC-5",
-    },
     notifications: {
       lowStock: true,
       orderUpdates: true,
@@ -56,6 +46,7 @@ const Settings = () => {
     console.log("Settings saved:", settings);
     message.success("Settings saved successfully!");
   };
+
   const getAllProducts = async () => {
     try {
       const response = await axios.get(`${baseURL}/admin/getAllProducts`, {
@@ -69,6 +60,7 @@ const Settings = () => {
       throw error;
     }
   };
+
   const getAllCategories = async () => {
     try {
       const response = await axios.get(`${baseURL}/admin/getAllCategories`, {
@@ -82,6 +74,7 @@ const Settings = () => {
       throw error;
     }
   };
+
   const getAllOrders = async () => {
     try {
       const response = await axios.get(`${baseURL}/admin/getAllTransactions`, {
@@ -129,86 +122,55 @@ const Settings = () => {
   return (
     <div className='settings-container'>
       <h1 className='settings-title'>Settings</h1>
-      <Tabs defaultActiveKey='1'>
-        <TabPane
-          tab={
-            <span>
-              <UserOutlined />
-              Profile Settings
-            </span>
-          }
-          key='1'>
-          <div className='form-grid'>
-            <div className='form-group'>
-              <label>Company Name</label>
-              <Input
-                value={userData.username}
-                onChange={(e) =>
-                  setSettings({
-                    ...settings,
-                    company: { ...settings.company, name: e.target.value },
-                  })
-                }
-                style={{ marginBottom: "1rem" }}
-              />
+
+      <Row gutter={[16, 16]}>
+        {/* Profile Settings */}
+        <Col xs={24} sm={12} md={8}>
+          <Card title='Profile Settings' variant={false} hoverable>
+            <div className='form-grid'>
+              <div className='form-group'>
+                <label>Username</label>
+                <Input
+                  value={userData.username}
+                  onChange={(e) =>
+                    setSettings({
+                      ...settings,
+                      company: { ...settings.company, name: e.target.value },
+                    })
+                  }
+                  style={{ marginBottom: "1rem" }}
+                />
+              </div>
+              <div className='form-group'>
+                <label>Email Address</label>
+                <Input
+                  type='email'
+                  value={userData.email}
+                  onChange={(e) =>
+                    setSettings({
+                      ...settings,
+                      company: { ...settings.company, email: e.target.value },
+                    })
+                  }
+                  style={{ marginBottom: "1rem" }}
+                />
+              </div>
+              <div className='form-group'>
+                <label>Phone Number</label>
+                <Input
+                  type='tel'
+                  value={userData.phone || "No phone number"}
+                  disabled
+                  style={{ marginBottom: "1rem" }}
+                />
+              </div>
             </div>
-            <div className='form-group'>
-              <label>Email Address</label>
-              <Input
-                type='email'
-                value={userData.email}
-                onChange={(e) =>
-                  setSettings({
-                    ...settings,
-                    company: { ...settings.company, email: e.target.value },
-                  })
-                }
-                style={{ marginBottom: "1rem" }}
-              />
-            </div>
-            <div className='form-group'>
-              <label>Phone Number</label>
-              <Input
-                type='tel'
-                value={userData.phone || "No phone number"}
-                disabled
-                style={{ marginBottom: "1rem" }}
-              />
-            </div>
-            <div className='form-group'>
-              <label>Time Zone</label>
-              <Select
-                value={settings.display.timezone}
-                onChange={(value) =>
-                  setSettings({
-                    ...settings,
-                    display: { ...settings.display, timezone: value },
-                  })
-                }
-                style={{ marginBottom: "1rem" }}>
-                <Select.Option value='UTC-8'>
-                  UTC-8 (Pacific Time)
-                </Select.Option>
-                <Select.Option value='UTC-5'>
-                  UTC-5 (Eastern Time)
-                </Select.Option>
-                <Select.Option value='UTC+0'>UTC+0 (GMT)</Select.Option>
-                <Select.Option value='UTC+1'>
-                  UTC+1 (Central European Time)
-                </Select.Option>
-              </Select>
-            </div>
-          </div>
-        </TabPane>
-        <TabPane
-          tab={
-            <span>
-              <BellOutlined />
-              Notification Preferences
-            </span>
-          }
-          key='2'>
-          <div className='settings-options'>
+          </Card>
+        </Col>
+
+        {/* Notification Preferences */}
+        <Col xs={24} sm={12} md={8}>
+          <Card title='Notification Preferences' variant={false} hoverable>
             <div className='toggle-option'>
               <h3>Low Stock Alerts</h3>
               <Switch
@@ -223,8 +185,7 @@ const Settings = () => {
                   })
                 }
               />
-            </div>
-            <div className='toggle-option'>
+
               <h3>Order Updates</h3>
               <Switch
                 checked={settings.notifications.orderUpdates}
@@ -239,46 +200,46 @@ const Settings = () => {
                 }
               />
             </div>
-          </div>
-        </TabPane>
-        <TabPane
-          tab={
-            <span>
-              <DatabaseOutlined />
-              Data Management
-            </span>
-          }
-          key='3'>
-          <Button onClick={handleExportData}>Export to JSON</Button>
-        </TabPane>
-        <TabPane
-          tab={
-            <span>
-              <LockOutlined />
-              Security Settings
-            </span>
-          }
-          key='4'>
-          <div>
-            <h3>Two-Factor Authentication</h3>
-            <Button
-              type={settings.security.twoFactorEnabled ? "default" : "primary"}
-              onClick={() =>
-                setSettings({
-                  ...settings,
-                  security: {
-                    ...settings.security,
-                    twoFactorEnabled: !settings.security.twoFactorEnabled,
-                  },
-                })
-              }>
-              {settings.security.twoFactorEnabled
-                ? "Disable 2FA"
-                : "Enable 2FA"}
-            </Button>
-          </div>
-        </TabPane>
-      </Tabs>
+          </Card>
+        </Col>
+
+        {/* Data Management */}
+        <Col xs={24} sm={12} md={8}>
+          <Card
+            title='Data Management'
+            variant={true}
+            hoverable
+            style={{ marginBottom: "2rem" }}>
+            <Button onClick={handleExportData}>Export to JSON</Button>
+          </Card>
+
+          <Card title='Security Settings' variant={false} hoverable>
+            <div>
+              <h3>Two-Factor Authentication</h3>
+              <Button
+                type={
+                  settings.security.twoFactorEnabled ? "default" : "primary"
+                }
+                onClick={() =>
+                  setSettings({
+                    ...settings,
+                    security: {
+                      ...settings.security,
+                      twoFactorEnabled: !settings.security.twoFactorEnabled,
+                    },
+                  })
+                }>
+                {settings.security.twoFactorEnabled
+                  ? "Disable 2FA"
+                  : "Enable 2FA"}
+              </Button>
+            </div>
+          </Card>
+        </Col>
+
+        {/* Theme Customization */}
+      </Row>
+
       <div className='save-container'>
         <Button
           type='primary'
