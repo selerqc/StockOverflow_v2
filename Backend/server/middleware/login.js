@@ -16,7 +16,7 @@ const login = async (req, res) => {
   const comparePassword = await bcrypt.compare(password, getUser.password);
 
   if (!comparePassword) throw "Password is incorrect";
-  console.log(firstName, lastName, email, phone, password, role);
+
   const accessToken = jwtManager(getUser);
 
   res.status(200).json({
