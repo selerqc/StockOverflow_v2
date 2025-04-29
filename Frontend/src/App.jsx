@@ -11,7 +11,7 @@ import "@ant-design/v5-patch-for-react-19";
 import Login from "./pages/auth/Login/Login";
 import Register from "./pages/auth/Register/Register";
 
-import Dashboard from "./pages/User-Dashboard/Dashboard/Dashboard";
+import Dashboard from "./pages/User-Dashboard/Admin-Dashboard/Dashboard";
 import Layout from "./pages/User-Dashboard/Layout/Layout";
 import Analytics from "./pages/User-Dashboard/Analytics/Analytics";
 import ProtectedRoute from "./ProtectedRoute/ProtectedRoute";
@@ -25,6 +25,8 @@ import NotFound from "./components/NotFound/NotFound";
 import ForbiddenPage from "./components/NotFound/ForbiddenPage";
 import Alerts from "./pages/Alerts/Alerts";
 import Settings from "./pages/Settings/Settings";
+import EmployeeDashboard from "./pages/User-Dashboard/Employee-Dashboard/EmployeeDashboard";
+import BusinessOwnerDashboard from "./pages/User-Dashboard/BusinessOwner-Dashboard/BusinessOwner-Dashboard";
 const roleBasedRoutes = {
   Admin: [
     { path: "dashboard", element: <Dashboard /> },
@@ -37,6 +39,7 @@ const roleBasedRoutes = {
     { path: "settings", element: <Settings /> },
   ],
   "Business Owner": [
+    { path: "businessowner-dashboard", element: <BusinessOwnerDashboard /> },
     { path: "products", element: <Products /> },
     { path: "categories", element: <Categories /> },
     { path: "orders", element: <Orders /> },
@@ -44,10 +47,12 @@ const roleBasedRoutes = {
     { path: "alerts", element: <Alerts /> },
   ],
   Employee: [
+    { path: "employee-dashboard", element: <EmployeeDashboard /> },
     { path: "products", element: <Products /> },
     { path: "categories", element: <Categories /> },
     { path: "alerts", element: <Alerts /> },
     { path: "orders", element: <Orders /> },
+    { path: "*", element: <NotFound /> },
   ],
 };
 

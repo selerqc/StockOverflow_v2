@@ -15,10 +15,10 @@ import {
   FolderPlus,
   Bell,
 } from "lucide-react";
-import DashboardCard from "./../../../components/Card/DashboardCard";
-import "../Dashboard/Dashboard.css";
+import DashboardCard from "../../../components/Card/DashboardCard.jsx";
+import "./Dashboard.css";
 import axios from "axios";
-import { useToken } from "../../../hooks/TokenContext";
+import { useToken } from "../../../hooks/TokenContext.jsx";
 import { useNavigate } from "react-router-dom";
 import {
   BarChart,

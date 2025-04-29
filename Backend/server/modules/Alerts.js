@@ -3,23 +3,23 @@ const alertModel = require("../models/alert.model");
 const AlertsController = {
   GetAllAlerts: async (req, res) => {
     try {
-      const alerts = await alertModel
-        .find({
-          user_id: req.user._id,
-        })
-        .select({
-          _v: 0,
-        });
-
+      const alerts = await alertModel.find();
+      const transformedAlerts = alerts.map((alert) => ({
+        ...alert.toObject(),
+        createdAt: new Date(alert.createdAt).toLocaleString("en-US", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        }),
+      }));
       const getUnreadAlerts = await alertModel.countDocuments({
         is_read: false,
-        user_id: req.user._id,
       });
 
       res.status(200).json({
         status: "success",
         message: "Alerts retrieved successfully",
-        data: alerts,
+        data: transformedAlerts,
         unreadAlerts: getUnreadAlerts,
       });
     } catch (error) {

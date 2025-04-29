@@ -54,7 +54,16 @@ const Register = () => {
           <div className='login-logo'>
             <Package className='login-icon-large' />
           </div>
-          <p className='title'>StockOverflow</p>
+          <Title
+            level={3}
+            style={{
+              fontWeight: 700,
+              margin: 0,
+              display: "flex",
+              alignItems: "center",
+            }}>
+            StockOverflow
+          </Title>
         </div>
         <Row justify='center' align='middle' style={{ height: "100%" }}>
           <Col xs={20}>

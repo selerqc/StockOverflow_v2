@@ -26,7 +26,7 @@ function Login() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { setToken, token } = useToken();
-
+  const role = sessionStorage.getItem("role");
   const handleLogin = async () => {
     setLoading(true);
 
@@ -48,11 +48,13 @@ function Login() {
         );
         updateLastLogin(response.data.data._id);
         setTimeout(() => {
-          {
-            sessionStorage.getItem("role") === "Admin"
-              ? navigate("/dashboard")
-              : navigate("/products");
-          }
+          role === "Admin"
+            ? navigate("/dashboard")
+            : role === "Business Owner"
+            ? navigate("/businessowner-dashboard")
+            : role === "Employee"
+            ? navigate("/employee-dashboard")
+            : navigate("/login");
         }, 3000);
       })
       .catch((error) => {
@@ -88,7 +90,16 @@ function Login() {
           <div className='login-logo'>
             <Package className='login-icon-large' />
           </div>
-          <p className='title'>StockOverflow</p>
+          <Title
+            level={3}
+            style={{
+              fontWeight: 700,
+              margin: 0,
+              display: "flex",
+              alignItems: "center",
+            }}>
+            StockOverflow
+          </Title>
         </div>
         <Row justify='center' align='middle' style={{ height: "100%" }}>
           <Col xs={20}>

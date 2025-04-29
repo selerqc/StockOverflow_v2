@@ -86,15 +86,20 @@ const Orders = () => {
   };
 
   const updateOneTransactions = async (orderId, newStatus) => {
-    await axios.patch(
-      `${baseURL}/transactions/updateOneTransactions/${orderId}`,
-      { status: newStatus },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    console.log(orderId);
+    await axios
+      .patch(
+        `${baseURL}/transactions/updateOneTransactions/${orderId}`,
+        { status: newStatus },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      )
+      .catch((error) => {
+        console.error("Error updating transaction:", error);
+      });
 
     const newAlert = {
       type: "info",
@@ -107,11 +112,15 @@ const Orders = () => {
   };
 
   const addNewAlert = async (newAlert) => {
-    await axios.post(`${baseURL}/alerts/addAlerts`, newAlert, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    await axios
+      .post(`${baseURL}/alerts/addAlerts`, newAlert, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .catch((error) => {
+        console.error("Error adding alert:", error);
+      });
   };
 
   const filteredOrders = orders.filter((order) => {
@@ -136,7 +145,12 @@ const Orders = () => {
       title: "Order ID",
       dataIndex: "_id",
       key: "_id",
-      render: (text) => `#${text}`,
+      render: (text) => `#${text.slice(0, 5)}...`,
+    },
+    {
+      title: "Customer",
+      dataIndex: "customer",
+      key: "customer",
     },
     {
       title: "Product",

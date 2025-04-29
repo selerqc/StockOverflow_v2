@@ -4,27 +4,19 @@ const transactionsModel = require("../models/transaction.model");
 
 const transactionsController = {
   GetAllTransactions: async (req, res) => {
-    const transactions = await transactionsModel
-      .find({
-        user_id: req.user._id,
-      })
-      .select({
-        __v: 0,
-      });
+    const transactions = await transactionsModel.find({}).select({
+      __v: 0,
+    });
 
-    const products = await productsModel
-      .find({
-        user_id: req.user._id,
-      })
-      .select({
-        __v: 0,
-        createdAt: 0,
-        updatedAt: 0,
-        stock_level: 0,
-        price: 0,
-        category: 0,
-        sku: 0,
-      });
+    const products = await productsModel.find({}).select({
+      __v: 0,
+      createdAt: 0,
+      updatedAt: 0,
+      stock_level: 0,
+      price: 0,
+      category: 0,
+      sku: 0,
+    });
 
     const transformedTransactions = transactions.map((transaction) => ({
       ...transaction.toObject(),
@@ -50,6 +42,7 @@ const transactionsController = {
     const transactions = await transactionsModel.find({
       user_id: req.user._id,
     });
+
     transactions.forEach((transaction) => {
       if (transaction.status === "pending") pending++;
       if (transaction.status === "completed") completed++;
@@ -64,12 +57,13 @@ const transactionsController = {
   },
 
   CreateIncomingOrder: async (req, res) => {
-    const { product_id, name, stock_level, total_price } = req.body;
+    const { product_id, name, customer, stock_level, total_price } = req.body;
 
     await transactionsModel.create({
       product_id: product_id,
       user_id: req.user._id,
       name: name,
+      customer: customer,
       type: "incoming",
       stock_level: stock_level,
       total_price: total_price,
@@ -85,7 +79,7 @@ const transactionsController = {
   },
 
   CreateOutgoingOrder: async (req, res) => {
-    const { product_id, name, stock_level, total_price } = req.body;
+    const { product_id, customer, name, stock_level, total_price } = req.body;
 
     const product = await productsModel.findOne(
       {
@@ -110,6 +104,7 @@ const transactionsController = {
       product_id: product_id,
       user_id: req.user._id,
       name: name,
+      customer: customer,
       type: "outgoing",
       stock_level: stock_level,
       total_price: total_price,
@@ -126,19 +121,17 @@ const transactionsController = {
     });
   },
   UpdateOneTransaction: async (req, res) => {
-    const { id } = req.params;
     const { status } = req.body;
 
     if (!status) throw "All fields are required";
 
-    const transaction = await transactionsModel.findOne({
-      _id: id,
-      user_id: req.user._id,
+    const transaction = await transactionsModel.find({
+      _id: req.params.id,
     });
     if (!transaction) throw "Transaction not found";
 
     const updatedTransaction = await transactionsModel.findOneAndUpdate(
-      { _id: id, user_id: req.user._id },
+      { _id: req.params.id },
       { status },
       { new: true }
     );

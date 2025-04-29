@@ -81,6 +81,9 @@ const Sidebar = ({ isOpen }) => {
       case "Employee":
         return (
           <>
+            <Link to='/employee-dashboard' className='dashboard-link'>
+              <LayoutDashboard size={20} className='dashboard-icon' /> Dashboard
+            </Link>
             <button
               onClick={() => setIsInventoryOpen(!isInventoryOpen)}
               className={`inventory-toggle ${isInventoryOpen ? "active" : ""}`}>
@@ -115,6 +118,9 @@ const Sidebar = ({ isOpen }) => {
       case "Business Owner":
         return (
           <>
+            <Link to='/businessowner-dashboard' className='dashboard-link'>
+              <LayoutDashboard size={20} className='dashboard-icon' /> Dashboard
+            </Link>
             <button
               onClick={() => setIsInventoryOpen(!isInventoryOpen)}
               className={`inventory-toggle ${isInventoryOpen ? "active" : ""}`}>

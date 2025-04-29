@@ -12,20 +12,9 @@ const TopBar = ({ onMenuClick }) => {
   const { token, setToken } = useToken();
   const role = sessionStorage.getItem("role");
   const handleLogout = () => {
-    axios
-      .delete(`${baseURL}/alerts/deleteManyAlerts`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then(() => {
-        setToken(null);
-        sessionStorage.removeItem("role");
-        sessionStorage.removeItem("user");
-      })
-      .catch((error) => {
-        console.error("Error deleting alerts:", error);
-      });
+    setToken(null);
+    sessionStorage.removeItem("role");
+    sessionStorage.removeItem("user");
   };
   const fetchUnreadAlerts = async () => {
     await axios

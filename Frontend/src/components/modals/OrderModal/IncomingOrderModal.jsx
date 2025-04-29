@@ -88,6 +88,13 @@ const OrderModal = ({ order, onClose }) => {
             ))}
           </Select>
         </Form.Item>
+        <Form.Item
+          label='Customer name'
+          name='customer'
+          rules={[{ required: true, message: "Please enter  customer name" }]}
+          style={{ marginBottom: "1rem" }}>
+          <Input type='string' />
+        </Form.Item>
 
         <Form.Item
           label='Quantity'

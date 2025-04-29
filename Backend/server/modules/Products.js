@@ -4,6 +4,9 @@ const validator = require("validator");
 
 const ProductsController = {
   GetProductStatus: async (req, res) => {
+    const getProductsThatHaveLowStock = await productsModel.find({
+      stock_level: { $lt: 21 },
+    });
     const productCount = await productsModel.countDocuments({
       user_id: req.user._id,
     });
@@ -17,12 +20,13 @@ const ProductsController = {
       message: "Product status retrieved successfully",
       productCount,
       lowStockCount,
+      getProductsThatHaveLowStock,
     });
   },
 
   GetAllProducts: async (req, res) => {
     const products = await productsModel
-      .find({ user_id: req.user._id })
+      .find({})
       .populate("category_id", "name")
       .select("-__v");
 
