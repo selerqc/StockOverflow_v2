@@ -29,7 +29,7 @@ import EmployeeDashboard from "./pages/User-Dashboard/Employee-Dashboard/Employe
 import BusinessOwnerDashboard from "./pages/User-Dashboard/BusinessOwner-Dashboard/BusinessOwner-Dashboard";
 const roleBasedRoutes = {
   Admin: [
-    { path: "dashboard", element: <Dashboard /> },
+    { path: "admin-dashboard", element: <Dashboard /> },
     { path: "analytics", element: <Analytics /> },
     { path: "products", element: <Products /> },
     { path: "categories", element: <Categories /> },

@@ -13,7 +13,7 @@ const TopBar = ({ onMenuClick }) => {
   const role = sessionStorage.getItem("role");
   const handleLogout = () => {
     setToken(null);
-    sessionStorage.removeItem("role");
+
     sessionStorage.removeItem("user");
   };
   const fetchUnreadAlerts = async () => {

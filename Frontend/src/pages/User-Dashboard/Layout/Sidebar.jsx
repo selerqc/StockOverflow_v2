@@ -36,7 +36,7 @@ const Sidebar = ({ isOpen }) => {
       case "Admin":
         return (
           <>
-            <Link to='/dashboard' className='dashboard-link'>
+            <Link to='/admin-dashboard' className='dashboard-link'>
               <LayoutDashboard size={20} className='dashboard-icon' /> Dashboard
             </Link>
 

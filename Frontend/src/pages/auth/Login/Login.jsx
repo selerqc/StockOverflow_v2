@@ -42,19 +42,26 @@ function Login() {
 
         setToken(response.data.accessToken);
         sessionStorage.setItem("user", response.data.data.username);
-        sessionStorage.setItem("role", response.data.data.role);
         message.success(
           `Login successful, Welcome back ${response.data.data.username}`
         );
         updateLastLogin(response.data.data._id);
         setTimeout(() => {
-          role === "Admin"
-            ? navigate("/dashboard")
-            : role === "Business Owner"
-            ? navigate("/businessowner-dashboard")
-            : role === "Employee"
-            ? navigate("/employee-dashboard")
-            : navigate("/login");
+          const userRole = response.data.data.role;
+          switch (userRole) {
+            case "Admin":
+              navigate("/admin-dashboard");
+              break;
+            case "Business Owner":
+              navigate("/businessowner-dashboard");
+              break;
+            case "Employee":
+              navigate("/employee-dashboard");
+              break;
+            default:
+              navigate("/login");
+              break;
+          }
         }, 3000);
       })
       .catch((error) => {
