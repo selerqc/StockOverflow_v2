@@ -68,11 +68,6 @@
   color: white;
 }
 
-.nav-link:hover {
-  background-color: #f3f4f6;
-  color: #4f46e5;
-}
-
 .nav-text {
   margin-left: 0.75rem;
   font-weight: 500;
@@ -90,11 +85,6 @@
   transition: background-color 0.3s ease;
   border: none;
   background-color: white;
-}
-
-.inventory-toggle:hover {
-  background-color: #f3f4f6;
-  color: #4f46e5;
 }
 
 .toggle-icon {

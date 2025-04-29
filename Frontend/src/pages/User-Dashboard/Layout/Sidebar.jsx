@@ -19,7 +19,7 @@ const { Title, Text } = Typography;
 const Sidebar = ({ isOpen }) => {
   const location = useLocation();
 
-  const [isInventoryOpen, setIsInventoryOpen] = useState(true);
+  const [isInventoryOpen, setIsInventoryOpen] = useState(false);
   const role = sessionStorage.getItem("role");
 
   const isActive = (path) => location.pathname === path;

@@ -37,6 +37,7 @@ const roleBasedRoutes = {
     { path: "manage-users", element: <ManageUsers /> },
     { path: "alerts", element: <Alerts /> },
     { path: "settings", element: <Settings /> },
+    { path: "*", element: <NotFound /> },
   ],
   "Business Owner": [
     { path: "businessowner-dashboard", element: <BusinessOwnerDashboard /> },

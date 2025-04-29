@@ -1,50 +1,119 @@
 import React, { useEffect, useState } from "react";
-import { Input, Select, Switch, Button, message, Card, Row, Col } from "antd";
-import { SaveOutlined } from "@ant-design/icons";
+import {
+  Input,
+  Select,
+  Switch,
+  Button,
+  message,
+  Card,
+  Row,
+  Col,
+  Typography,
+  Divider,
+  Avatar,
+  Form,
+  Space,
+  Tabs,
+  List,
+  Upload,
+  Badge,
+  Spin,
+  Tooltip,
+  Alert,
+  Skeleton,
+} from "antd";
+import {
+  SaveOutlined,
+  UserOutlined,
+  BellOutlined,
+  DownloadOutlined,
+  LockOutlined,
+  SettingOutlined,
+  ExportOutlined,
+  ExclamationCircleOutlined,
+  UploadOutlined,
+  PictureOutlined,
+  LogoutOutlined,
+  EditOutlined,
+  SecurityScanOutlined,
+  SyncOutlined,
+  DatabaseOutlined,
+} from "@ant-design/icons";
 import axios from "axios";
 import { baseURL } from "../../../config.js";
 import { useToken } from "../../hooks/TokenContext.jsx";
 import useFetch from "../../hooks/useFetch";
+import "./Settings.css";
+import Lanyard from "../../components/Lanyard/Lanyard.jsx";
+const { Title, Text, Paragraph } = Typography;
+const { TabPane } = Tabs;
 
 const Settings = () => {
   const { token } = useToken();
+  const [loading, setLoading] = useState(false);
+  const [saveLoading, setSaveLoading] = useState(false);
+  const [exportLoading, setExportLoading] = useState(false);
+  const [form] = Form.useForm();
 
   const [exportData, setExportData] = useState({
     products: [],
     categories: [],
     orders: [],
   });
+
   const [userData, setUserData] = useState({
-    username: " ",
-    email: " ",
-    phone: " ",
+    username: "",
+    email: "",
+    phone: "",
   });
-  const { data, error } = useFetch(`${baseURL}/users/dashboard`);
+
+  const { data, error, isLoading } = useFetch(`${baseURL}/users/dashboard`);
 
   useEffect(() => {
     if (error) {
+      message.error("Error fetching user data. Please try again.");
       console.error("Error fetching user data:", error);
     }
     if (data) {
       setUserData(data.data);
+      form.setFieldsValue({
+        username: data.data.username,
+        email: data.data.email,
+        phone: data.data.phone || "No phone number",
+      });
     }
-  }, [data, error]);
+  }, [data, error, form]);
 
   const initialSettings = {
     notifications: {
       lowStock: true,
       orderUpdates: true,
+      priceAlerts: false,
+      systemNotifications: true,
     },
     security: {
       twoFactorEnabled: false,
+      sessionTimeout: "30min",
+      passwordChangeRequired: false,
+    },
+    display: {
+      theme: "light",
+      compactMode: false,
+      highContrast: false,
     },
   };
 
   const [settings, setSettings] = useState(initialSettings);
 
   const handleSaveChanges = () => {
-    console.log("Settings saved:", settings);
-    message.success("Settings saved successfully!");
+    setSaveLoading(true);
+
+    // Simulate API call
+    setTimeout(() => {
+      console.log("Settings saved:", settings);
+      message.success("Settings saved successfully!");
+      setSaveLoading(false);
+    }, 1000);
   };
 
   const getAllProducts = async () => {
@@ -90,8 +159,10 @@ const Settings = () => {
   };
 
   const handleExportData = () => {
-    Promise.all([getAllProducts(), getAllCategories(), getAllOrders()]).then(
-      ([products, categories, orders]) => {
+    setExportLoading(true);
+
+    Promise.all([getAllProducts(), getAllCategories(), getAllOrders()])
+      .then(([products, categories, orders]) => {
         const exportData = {
           products: products.data,
           categories: categories.data,
@@ -99,155 +170,500 @@ const Settings = () => {
         };
         console.log("Exported Data:", exportData);
         setExportData(exportData);
-      }
-    );
 
-    const blob = new Blob([JSON.stringify(exportData, null, 2)], {
-      type: "application/json",
-    });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `stockoverflow-export-${
-      new Date().toISOString().split("T")[0]
-    }.json`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+        const blob = new Blob([JSON.stringify(exportData, null, 2)], {
+          type: "application/json",
+        });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `stockoverflow-export-${
+          new Date().toISOString().split("T")[0]
+        }.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
 
-    message.success("Data exported successfully!");
+        message.success("Data exported successfully!");
+        setExportLoading(false);
+      })
+      .catch((err) => {
+        message.error("Failed to export data. Please try again.");
+        setExportLoading(false);
+      });
   };
+
+  const notificationItems = [
+    {
+      title: "Low Stock Alerts",
+      description: "Get notified when products reach low stock levels",
+      checked: settings.notifications.lowStock,
+      onChange: (checked) =>
+        setSettings({
+          ...settings,
+          notifications: {
+            ...settings.notifications,
+            lowStock: checked,
+          },
+        }),
+    },
+    {
+      title: "Order Updates",
+      description: "Receive notifications for new orders and status changes",
+      checked: settings.notifications.orderUpdates,
+      onChange: (checked) =>
+        setSettings({
+          ...settings,
+          notifications: {
+            ...settings.notifications,
+            orderUpdates: checked,
+          },
+        }),
+    },
+    {
+      title: "Price Alerts",
+      description: "Get notified when product prices change significantly",
+      checked: settings.notifications.priceAlerts,
+      onChange: (checked) =>
+        setSettings({
+          ...settings,
+          notifications: {
+            ...settings.notifications,
+            priceAlerts: checked,
+          },
+        }),
+    },
+    {
+      title: "System Notifications",
+      description: "Receive updates about system maintenance and new features",
+      checked: settings.notifications.systemNotifications,
+      onChange: (checked) =>
+        setSettings({
+          ...settings,
+          notifications: {
+            ...settings.notifications,
+            systemNotifications: checked,
+          },
+        }),
+    },
+  ];
+
+  const securitySettings = [
+    {
+      title: "Two-Factor Authentication",
+      description: "Add an extra layer of security to your account",
+      value: settings.security.twoFactorEnabled,
+      action: (
+        <Button
+          type={settings.security.twoFactorEnabled ? "default" : "primary"}
+          icon={<SecurityScanOutlined />}
+          onClick={() =>
+            setSettings({
+              ...settings,
+              security: {
+                ...settings.security,
+                twoFactorEnabled: !settings.security.twoFactorEnabled,
+              },
+            })
+          }>
+          {settings.security.twoFactorEnabled ? "Disable 2FA" : "Enable 2FA"}
+        </Button>
+      ),
+    },
+    {
+      title: "Session Timeout",
+      description: "Set how long until inactive sessions are logged out",
+      value: settings.security.sessionTimeout,
+      action: (
+        <Select
+          defaultValue='30min'
+          style={{ width: 120 }}
+          onChange={(value) =>
+            setSettings({
+              ...settings,
+              security: {
+                ...settings.security,
+                sessionTimeout: value,
+              },
+            })
+          }>
+          <Select.Option value='15min'>15 minutes</Select.Option>
+          <Select.Option value='30min'>30 minutes</Select.Option>
+          <Select.Option value='60min'>1 hour</Select.Option>
+          <Select.Option value='never'>Never</Select.Option>
+        </Select>
+      ),
+    },
+    {
+      title: "Password Change",
+      description: "Change your account password",
+      action: (
+        <Button
+          icon={<LockOutlined />}
+          onClick={() =>
+            message.info("Password change functionality would open here")
+          }>
+          Change Password
+        </Button>
+      ),
+    },
+  ];
+
+  const dataManagementOptions = [
+    {
+      title: "Export All Data",
+      description: "Export your inventory, orders, and categories as JSON",
+      action: (
+        <Button
+          type='primary'
+          icon={<DownloadOutlined />}
+          onClick={handleExportData}
+          loading={exportLoading}>
+          Export Data
+        </Button>
+      ),
+    },
+    {
+      title: "Backup Settings",
+      description: "Save a backup of your system settings",
+      action: (
+        <Button
+          icon={<DatabaseOutlined />}
+          onClick={() => message.info("Settings backup would run here")}>
+          Backup Settings
+        </Button>
+      ),
+    },
+    {
+      title: "Import Data",
+      description: "Import data from a JSON file",
+      action: (
+        <Upload
+          beforeUpload={(file) => {
+            message.info(`Would import data from ${file.name}`);
+            return false;
+          }}
+          showUploadList={false}>
+          <Button icon={<UploadOutlined />}>Import JSON</Button>
+        </Upload>
+      ),
+    },
+  ];
+
+  const displaySettings = [
+    {
+      title: "Theme",
+      description: "Choose between light and dark theme",
+      action: (
+        <Select
+          defaultValue='light'
+          style={{ width: 120 }}
+          onChange={(value) =>
+            setSettings({
+              ...settings,
+              display: {
+                ...settings.display,
+                theme: value,
+              },
+            })
+          }>
+          <Select.Option value='light'>Light</Select.Option>
+          <Select.Option value='dark'>Dark</Select.Option>
+        </Select>
+      ),
+    },
+    {
+      title: "Compact Mode",
+      description: "Use compact view for more content on screen",
+      checked: settings.display.compactMode,
+      action: (
+        <Switch
+          checked={settings.display.compactMode}
+          onChange={(checked) =>
+            setSettings({
+              ...settings,
+              display: {
+                ...settings.display,
+                compactMode: checked,
+              },
+            })
+          }
+        />
+      ),
+    },
+    {
+      title: "High Contrast",
+      description: "Enable high contrast mode for better accessibility",
+      checked: settings.display.highContrast,
+      action: (
+        <Switch
+          checked={settings.display.highContrast}
+          onChange={(checked) =>
+            setSettings({
+              ...settings,
+              display: {
+                ...settings.display,
+                highContrast: checked,
+              },
+            })
+          }
+        />
+      ),
+    },
+  ];
 
   return (
     <div className='settings-container'>
-      <h1 className='settings-title'>Settings</h1>
+      <div className='settings-header'>
+        <div>
+          <Title level={2}>
+            <SettingOutlined /> Settings
+          </Title>
+          <Text type='secondary'>
+            Manage your account settings and preferences
+          </Text>
+        </div>
 
-      <Row gutter={[16, 16]}>
-        {/* Profile Settings */}
-        <Col xs={24} sm={12} md={8}>
-          <Card title='Profile Settings' variant={false} hoverable>
-            <div className='form-grid'>
-              <div className='form-group'>
-                <label>Username</label>
-                <Input
-                  value={userData.username}
-                  onChange={(e) =>
-                    setSettings({
-                      ...settings,
-                      company: { ...settings.company, name: e.target.value },
-                    })
-                  }
-                  style={{ marginBottom: "1rem" }}
-                />
-              </div>
-              <div className='form-group'>
-                <label>Email Address</label>
-                <Input
-                  type='email'
-                  value={userData.email}
-                  onChange={(e) =>
-                    setSettings({
-                      ...settings,
-                      company: { ...settings.company, email: e.target.value },
-                    })
-                  }
-                  style={{ marginBottom: "1rem" }}
-                />
-              </div>
-              <div className='form-group'>
-                <label>Phone Number</label>
-                <Input
-                  type='tel'
-                  value={userData.phone || "No phone number"}
-                  disabled
-                  style={{ marginBottom: "1rem" }}
-                />
-              </div>
-            </div>
-          </Card>
-        </Col>
-
-        {/* Notification Preferences */}
-        <Col xs={24} sm={12} md={8}>
-          <Card title='Notification Preferences' variant={false} hoverable>
-            <div className='toggle-option'>
-              <h3>Low Stock Alerts</h3>
-              <Switch
-                checked={settings.notifications.lowStock}
-                onChange={(checked) =>
-                  setSettings({
-                    ...settings,
-                    notifications: {
-                      ...settings.notifications,
-                      lowStock: checked,
-                    },
-                  })
-                }
-              />
-
-              <h3>Order Updates</h3>
-              <Switch
-                checked={settings.notifications.orderUpdates}
-                onChange={(checked) =>
-                  setSettings({
-                    ...settings,
-                    notifications: {
-                      ...settings.notifications,
-                      orderUpdates: checked,
-                    },
-                  })
-                }
-              />
-            </div>
-          </Card>
-        </Col>
-
-        {/* Data Management */}
-        <Col xs={24} sm={12} md={8}>
-          <Card
-            title='Data Management'
-            variant={true}
-            hoverable
-            style={{ marginBottom: "2rem" }}>
-            <Button onClick={handleExportData}>Export to JSON</Button>
-          </Card>
-
-          <Card title='Security Settings' variant={false} hoverable>
-            <div>
-              <h3>Two-Factor Authentication</h3>
-              <Button
-                type={
-                  settings.security.twoFactorEnabled ? "default" : "primary"
-                }
-                onClick={() =>
-                  setSettings({
-                    ...settings,
-                    security: {
-                      ...settings.security,
-                      twoFactorEnabled: !settings.security.twoFactorEnabled,
-                    },
-                  })
-                }>
-                {settings.security.twoFactorEnabled
-                  ? "Disable 2FA"
-                  : "Enable 2FA"}
-              </Button>
-            </div>
-          </Card>
-        </Col>
-
-        {/* Theme Customization */}
-      </Row>
-
-      <div className='save-container'>
         <Button
           type='primary'
           icon={<SaveOutlined />}
-          onClick={handleSaveChanges}>
-          Save Changes
+          onClick={handleSaveChanges}
+          loading={saveLoading}
+          size='large'>
+          Save All Changes
         </Button>
       </div>
+
+      <Tabs defaultActiveKey='1' type='card' className='settings-tabs'>
+        <TabPane
+          tab={
+            <span>
+              <UserOutlined />
+              Profile
+            </span>
+          }
+          key='1'>
+          <Skeleton loading={isLoading} active>
+            <Row gutter={[24, 24]}>
+              <Col xs={24} md={8}>
+                {/* <Card className='profile-card' bordered={false}>
+                  <div className='user-avatar-container'>
+                    <Badge
+                      count={
+                        <Tooltip title='Edit Profile Picture'>
+                          <Button
+                            type='primary'
+                            shape='circle'
+                            size='small'
+                            icon={<EditOutlined />}
+                            className='avatar-edit-button'
+                          />
+                        </Tooltip>
+                      }>
+                      <Avatar
+                        size={100}
+                        icon={<UserOutlined />}
+                        className='user-avatar'
+                      />
+                    </Badge>
+                    <Title level={4}>{userData.username || "User"}</Title>
+                    <Text type='secondary'>{userData.email}</Text>
+                  </div>
+
+                  <Divider />
+
+                  <div className='account-actions'>
+                    <Button icon={<LogoutOutlined />} danger>
+                      Sign Out
+                    </Button>
+                  </div>
+                </Card> */}
+                <Lanyard />
+              </Col>
+
+              <Col xs={24} md={16}>
+                <Card title='Account Information' bordered={false}>
+                  <Form
+                    form={form}
+                    layout='vertical'
+                    initialValues={{
+                      username: userData.username,
+                      email: userData.email,
+                      phone: userData.phone || "No phone number",
+                    }}>
+                    <Row gutter={16}>
+                      <Col xs={24} md={12}>
+                        <Form.Item
+                          name='username'
+                          label='Username'
+                          rules={[
+                            { required: true, message: "Username is required" },
+                          ]}>
+                          <Input
+                            prefix={<UserOutlined />}
+                            placeholder='Username'
+                          />
+                        </Form.Item>
+                      </Col>
+
+                      <Col xs={24} md={12}>
+                        <Form.Item
+                          name='email'
+                          label='Email Address'
+                          rules={[
+                            { required: true, message: "Email is required" },
+                            {
+                              type: "email",
+                              message: "Please enter a valid email",
+                            },
+                          ]}>
+                          <Input type='email' placeholder='Email address' />
+                        </Form.Item>
+                      </Col>
+
+                      <Col xs={24} md={12}>
+                        <Form.Item name='phone' label='Phone Number'>
+                          <Input
+                            type='tel'
+                            placeholder='Phone number'
+                            disabled
+                          />
+                        </Form.Item>
+                      </Col>
+                    </Row>
+
+                    <Form.Item>
+                      <Button
+                        type='primary'
+                        icon={<SaveOutlined />}
+                        onClick={() => {
+                          form
+                            .validateFields()
+                            .then((values) => {
+                              message.success("Profile information updated");
+                            })
+                            .catch((info) => {
+                              message.error("Please check the form for errors");
+                            });
+                        }}>
+                        Update Profile
+                      </Button>
+                    </Form.Item>
+                  </Form>
+                </Card>
+              </Col>
+            </Row>
+          </Skeleton>
+        </TabPane>
+
+        <TabPane
+          tab={
+            <span>
+              <BellOutlined />
+              Notifications
+            </span>
+          }
+          key='2'>
+          <Card bordered={false}>
+            <List
+              itemLayout='horizontal'
+              dataSource={notificationItems}
+              renderItem={(item) => (
+                <List.Item
+                  actions={[
+                    <Switch checked={item.checked} onChange={item.onChange} />,
+                  ]}>
+                  <List.Item.Meta
+                    title={item.title}
+                    description={item.description}
+                  />
+                </List.Item>
+              )}
+            />
+          </Card>
+        </TabPane>
+
+        <TabPane
+          tab={
+            <span>
+              <LockOutlined />
+              Security
+            </span>
+          }
+          key='3'>
+          <Card bordered={false}>
+            <List
+              itemLayout='horizontal'
+              dataSource={securitySettings}
+              renderItem={(item) => (
+                <List.Item actions={[item.action]}>
+                  <List.Item.Meta
+                    title={item.title}
+                    description={item.description}
+                  />
+                </List.Item>
+              )}
+            />
+          </Card>
+        </TabPane>
+
+        <TabPane
+          tab={
+            <span>
+              <DatabaseOutlined />
+              Data Management
+            </span>
+          }
+          key='4'>
+          <Card bordered={false}>
+            <Alert
+              message='Data Management'
+              description='These actions will affect your stored data. Make sure to create backups regularly.'
+              type='info'
+              showIcon
+              style={{ marginBottom: 16 }}
+            />
+
+            <List
+              itemLayout='horizontal'
+              dataSource={dataManagementOptions}
+              renderItem={(item) => (
+                <List.Item actions={[item.action]}>
+                  <List.Item.Meta
+                    title={item.title}
+                    description={item.description}
+                  />
+                </List.Item>
+              )}
+            />
+          </Card>
+        </TabPane>
+
+        <TabPane
+          tab={
+            <span>
+              <SettingOutlined />
+              Display
+            </span>
+          }
+          key='5'>
+          <Card bordered={false}>
+            <List
+              itemLayout='horizontal'
+              dataSource={displaySettings}
+              renderItem={(item) => (
+                <List.Item actions={[item.action]}>
+                  <List.Item.Meta
+                    title={item.title}
+                    description={item.description}
+                  />
+                </List.Item>
+              )}
+            />
+          </Card>
+        </TabPane>
+      </Tabs>
     </div>
   );
 };

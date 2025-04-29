@@ -14,6 +14,7 @@ const TopBar = ({ onMenuClick }) => {
   const handleLogout = () => {
     setToken(null);
 
+    sessionStorage.removeItem("role");
     sessionStorage.removeItem("user");
   };
   const fetchUnreadAlerts = async () => {

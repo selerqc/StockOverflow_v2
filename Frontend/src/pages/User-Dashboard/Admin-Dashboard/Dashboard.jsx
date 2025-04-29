@@ -80,20 +80,11 @@ const ordersChart = [
 const COLORS = ["#4F46E5", "#10B981", "#F59E0B", "#EF4444", "#6366F1"];
 
 const Dashboard = () => {
-  const [productCount, setProductCount] = useState(0);
-  const [statusCount, setStatusCount] = useState(0);
-  const [lowStockItems, setLowStockItems] = useState(0);
-  const [topCategories, setTopCategories] = useState([]);
-  const [salesSummary, setSalesSummary] = useState({
-    today: 0,
-    week: 0,
-    month: 0,
-  });
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [recentActivities, setRecentActivities] = useState([]);
   const [upcomingEvents, setUpcomingEvents] = useState([]);
-  const role = sessionStorage.getItem("role");
+
   const { token } = useToken();
   const navigate = useNavigate();
   const currentDate = new Date().toLocaleDateString("en-US", {
@@ -107,149 +98,6 @@ const Dashboard = () => {
   const fetchDashboardData = async () => {
     try {
       setIsRefreshing(true);
-      const [productResponse, statusResponse] = await Promise.all([
-        getProductStatus(),
-        getStatusCount(),
-      ]);
-
-      setProductCount(productResponse.data.productCount);
-      setStatusCount(statusResponse.data.pending);
-      setLowStockItems(productResponse.data.lowStockCount);
-
-      // Fetch real category data (this is a placeholder - replace with actual API call)
-      try {
-        const categoryResponse = await axios.get(`${baseURL}/category/getAll`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
-        // Transform API data into the format needed for display
-        const transformedCategories = categoryResponse.data
-          .slice(0, 4)
-          .map((cat) => ({
-            name: cat.name,
-            percent: Math.floor(Math.random() * 100), // Replace with actual performance metric
-          }));
-
-        setTopCategories(transformedCategories);
-      } catch (error) {
-        console.error("Error fetching categories:", error);
-        // Fallback to demo data if API fails
-        setTopCategories([
-          { name: "Electronics", percent: 75 },
-          { name: "Office Supplies", percent: 60 },
-          { name: "Furniture", percent: 35 },
-        ]);
-      }
-
-      // Fetch sales summary data (placeholder)
-      try {
-        const salesResponse = await axios.get(
-          `${baseURL}/transactions/salesSummary`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
-        setSalesSummary(salesResponse.data);
-      } catch (error) {
-        console.error("Error fetching sales summary:", error);
-        // Fallback to demo data
-        setSalesSummary({
-          today: 1250,
-          week: 8750,
-          month: 32500,
-        });
-      }
-
-      // Fetch recent activities
-      try {
-        const activitiesResponse = await axios.get(
-          `${baseURL}/admin/getRecentActivities`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
-        setRecentActivities(activitiesResponse.data);
-      } catch (error) {
-        console.error("Error fetching activities:", error);
-        // Fallback demo data
-        setRecentActivities([
-          {
-            id: 1,
-            type: "product",
-            action: "New product added",
-            user: "John Smith",
-            time: "2 hours ago",
-          },
-          {
-            id: 2,
-            type: "order",
-            action: "Order #1234 fulfilled",
-            user: "Sarah Jones",
-            time: "4 hours ago",
-          },
-          {
-            id: 3,
-            type: "alert",
-            action: "Low stock alert for Electronics",
-            user: "System",
-            time: "Yesterday",
-          },
-          {
-            id: 4,
-            type: "user",
-            action: "New user registered",
-            user: "System",
-            time: "Yesterday",
-          },
-          {
-            id: 5,
-            type: "transaction",
-            action: "Refund processed for order #1201",
-            user: "Maria Garcia",
-            time: "2 days ago",
-          },
-        ]);
-      }
-
-      // Fetch upcoming events
-      try {
-        const eventsResponse = await axios.get(
-          `${baseURL}/admin/getUpcomingEvents`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
-        setUpcomingEvents(eventsResponse.data);
-      } catch (error) {
-        console.error("Error fetching events:", error);
-        // Fallback demo data
-        setUpcomingEvents([
-          {
-            id: 1,
-            title: "Inventory Review Meeting",
-            date: "2025-05-02",
-            time: "10:00 AM",
-          },
-          {
-            id: 2,
-            title: "New Product Launch",
-            date: "2025-05-05",
-            time: "9:00 AM",
-          },
-          {
-            id: 3,
-            title: "Vendor Meeting",
-            date: "2025-05-10",
-            time: "1:00 PM",
-          },
-          {
-            id: 4,
-            title: "Staff Training",
-            date: "2025-05-15",
-            time: "3:00 PM",
-          },
-        ]);
-      }
     } catch (error) {
       console.error("Error fetching dashboard data:", error);
     } finally {
@@ -269,38 +117,6 @@ const Dashboard = () => {
 
     return () => clearInterval(refreshInterval);
   }, []);
-
-  const getProductStatus = async () => {
-    if (role === "Admin") {
-      return await axios.get(`${baseURL}/admin/getAllProducts`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-    } else {
-      return await axios.get(`${baseURL}/products/getProductStatus`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-    }
-  };
-
-  const getStatusCount = async () => {
-    if (role === "Admin") {
-      return await axios.get(`${baseURL}/admin/getAllTransactions`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-    } else {
-      return await axios.get(`${baseURL}/transactions/getTransactionStatus`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-    }
-  };
 
   const handleQuickAction = (path) => {
     navigate(path);

@@ -48,19 +48,15 @@ function Login() {
         updateLastLogin(response.data.data._id);
         setTimeout(() => {
           const userRole = response.data.data.role;
-          switch (userRole) {
-            case "Admin":
-              navigate("/admin-dashboard");
-              break;
-            case "Business Owner":
-              navigate("/businessowner-dashboard");
-              break;
-            case "Employee":
-              navigate("/employee-dashboard");
-              break;
-            default:
-              navigate("/login");
-              break;
+          sessionStorage.setItem("role", userRole);
+          if (userRole === "Admin") {
+            navigate("/admin-dashboard");
+          } else if (userRole === "Business Owner") {
+            navigate("/businessowner-dashboard");
+          } else if (userRole === "Employee") {
+            navigate("/employee-dashboard");
+          } else {
+            navigate("/login");
           }
         }, 3000);
       })
