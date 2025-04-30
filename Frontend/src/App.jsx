@@ -126,6 +126,7 @@ function AnimatedRoutes() {
             }
           />
         )}
+        <Route path='/' element={<Navigate to='/login' replace />} />
         <Route path='/not-found' element={<NotFound />} />
         <Route path='/forbidden' element={<ForbiddenPage />} />
       </Routes>

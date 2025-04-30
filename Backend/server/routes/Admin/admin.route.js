@@ -10,6 +10,6 @@ adminRoute.use(auth);
 adminRoute
   .get("/getAllProducts", AdminController.GetAllProducts)
   .get("/getAllTransactions", AdminController.GetAllTransactions)
-  .get("/getAllCategories", AdminController.GetAllCategories);
-
+  .get("/getAllCategories", AdminController.GetAllCategories)
+  .get("/adminDashboard", AdminController.AdminDashboard);
 module.exports = adminRoute;

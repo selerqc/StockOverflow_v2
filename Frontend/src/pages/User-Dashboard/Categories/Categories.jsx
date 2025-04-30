@@ -77,7 +77,6 @@ const Categories = () => {
         })
         .then((response) => {
           setCategories(response.data.data);
-          fetchProductCounts(response.data.data);
         })
         .catch((error) => {
           console.error("Error fetching categories:", error);
@@ -91,35 +90,10 @@ const Categories = () => {
         })
         .then((response) => {
           setCategories(response.data.getCategory);
-          fetchProductCounts(response.data.getCategory);
         })
         .catch((error) => {
           console.error("Error fetching categories:", error);
         });
-    }
-  };
-
-  const fetchProductCounts = async (categories) => {
-    try {
-      const counts = {};
-      // This is a simplified version - in a real application you might fetch this from an endpoint
-      for (const category of categories) {
-        await axios
-          .get(`${baseURL}/product/getProductsByCategory/${category._id}`, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          })
-          .then((response) => {
-            counts[category._id] = response.data?.products?.length || 0;
-          })
-          .catch(() => {
-            counts[category._id] = 0;
-          });
-      }
-      setProductCounts(counts);
-    } catch (error) {
-      console.error("Error fetching product counts:", error);
     }
   };
 

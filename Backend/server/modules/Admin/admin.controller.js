@@ -1,6 +1,8 @@
 const productsModel = require("../../models/products.model");
 const transactionsModel = require("../../models/transaction.model");
 const categoryModel = require("../../models/category.model");
+const alertsModel = require("../../models/alert.model");
+const UserModel = require("../../models/user.model");
 
 const AdminController = {
   GetAllProducts: async (req, res) => {
@@ -63,6 +65,42 @@ const AdminController = {
       status: "success",
       message: "Categories retrieved successfully",
       data: categories,
+    });
+  },
+  AdminDashboard: async (req, res) => {
+    const products = await productsModel.findOne({}).select("-__v");
+    const transactions = await transactionsModel.findOne({}).select("-__v");
+    const alerts = await alertsModel.findOne({}).select("-__v");
+    const users = await UserModel.findOne({}).select({
+      _v: 0,
+      password: 0,
+      createdAt: 0,
+      updatedAt: 0,
+      _id: 0,
+    });
+    res.status(200).json({
+      status: "success",
+      message: "Admin dashboard data retrieved successfully",
+      data: {
+        recentActivities: [
+          {
+            type: "products",
+            products,
+          },
+          {
+            type: "transactions",
+            transactions,
+          },
+          {
+            type: "users",
+            users,
+          },
+          {
+            type: "alerts",
+            alerts,
+          },
+        ],
+      },
     });
   },
 };
