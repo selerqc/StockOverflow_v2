@@ -8,15 +8,9 @@ import { baseURL } from "../../../../config.js";
 
 const TopBar = ({ onMenuClick }) => {
   const [unreadAlerts, setUnreadAlerts] = useState(0);
-  const [isProfileOpen, setIsProfileOpen] = useState(false);
-  const { token, setToken } = useToken();
-  const role = sessionStorage.getItem("role");
-  const handleLogout = () => {
-    setToken(null);
 
-    sessionStorage.removeItem("role");
-    sessionStorage.removeItem("user");
-  };
+  const { token } = useToken();
+
   const fetchUnreadAlerts = async () => {
     await axios
       .get(`${baseURL}/alerts/getUnreadCount`, {
@@ -45,12 +39,11 @@ const TopBar = ({ onMenuClick }) => {
           <button onClick={onMenuClick} className='menu-button'>
             <Menu size={24} />
           </button>
-          <Link to='/dashboard' className='logo'>
-            <div className='logo-icon'>
-              <Package size={24} className='logo-icon-package' />
-            </div>
-            <span className='logo-text'>StockOverflow</span>
-          </Link>
+
+          <div className='logo-icon'>
+            <Package size={24} className='logo-icon-package' />
+          </div>
+          <span className='logo-text'>StockOverflow</span>
         </div>
 
         <div className='right-section'>
@@ -62,9 +55,7 @@ const TopBar = ({ onMenuClick }) => {
           </Link>
 
           <div className='profile-section'>
-            <button
-              onClick={() => setIsProfileOpen(!isProfileOpen)}
-              className='profile-button'>
+            <button className='profile-button'>
               <div className='profile-icon'>
                 <User size={20} />
               </div>
@@ -72,19 +63,6 @@ const TopBar = ({ onMenuClick }) => {
                 {sessionStorage.getItem("user").toUpperCase()}
               </span>
             </button>
-
-            {isProfileOpen && (
-              <div className='profile-menu'>
-                {role === "Admin" && (
-                  <Link to='/settings' className='profile-menu-item'>
-                    Settings
-                  </Link>
-                )}
-                <Link to='/login' className='profile-menu-item'>
-                  <span onClick={handleLogout}>Log out</span>
-                </Link>
-              </div>
-            )}
           </div>
         </div>
       </div>

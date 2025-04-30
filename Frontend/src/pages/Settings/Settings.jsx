@@ -47,9 +47,10 @@ import "./Settings.css";
 import Lanyard from "../../components/Lanyard/Lanyard.jsx";
 const { Title, Text, Paragraph } = Typography;
 const { TabPane } = Tabs;
+import { Link } from "react-router-dom";
 
 const Settings = () => {
-  const { token } = useToken();
+  const { token, setToken } = useToken();
   const [loading, setLoading] = useState(false);
   const [saveLoading, setSaveLoading] = useState(false);
   const [exportLoading, setExportLoading] = useState(false);
@@ -84,6 +85,12 @@ const Settings = () => {
     }
   }, [data, error, form]);
 
+  const handleLogout = () => {
+    setToken(null);
+
+    sessionStorage.removeItem("role");
+    sessionStorage.removeItem("user");
+  };
   const initialSettings = {
     notifications: {
       lowStock: true,
@@ -104,17 +111,6 @@ const Settings = () => {
   };
 
   const [settings, setSettings] = useState(initialSettings);
-
-  const handleSaveChanges = () => {
-    setSaveLoading(true);
-
-    // Simulate API call
-    setTimeout(() => {
-      console.log("Settings saved:", settings);
-      message.success("Settings saved successfully!");
-      setSaveLoading(false);
-    }, 1000);
-  };
 
   const getAllProducts = async () => {
     try {
@@ -424,15 +420,6 @@ const Settings = () => {
             Manage your account settings and preferences
           </Text>
         </div>
-
-        <Button
-          type='primary'
-          icon={<SaveOutlined />}
-          onClick={handleSaveChanges}
-          loading={saveLoading}
-          size='large'>
-          Save All Changes
-        </Button>
       </div>
 
       <Tabs defaultActiveKey='1' type='card' className='settings-tabs'>
@@ -447,9 +434,9 @@ const Settings = () => {
           <Skeleton loading={isLoading} active>
             <Row gutter={[24, 24]}>
               <Col xs={24} md={8}>
-                {/* <Card className='profile-card' bordered={false}>
+                <Card className='profile-card' variant={false}>
                   <div className='user-avatar-container'>
-                    <Badge
+                    {/* <Badge
                       count={
                         <Tooltip title='Edit Profile Picture'>
                           <Button
@@ -466,7 +453,8 @@ const Settings = () => {
                         icon={<UserOutlined />}
                         className='user-avatar'
                       />
-                    </Badge>
+                    </Badge> */}
+                    <Lanyard />
                     <Title level={4}>{userData.username || "User"}</Title>
                     <Text type='secondary'>{userData.email}</Text>
                   </div>
@@ -474,12 +462,14 @@ const Settings = () => {
                   <Divider />
 
                   <div className='account-actions'>
-                    <Button icon={<LogoutOutlined />} danger>
+                    <Button
+                      icon={<LogoutOutlined />}
+                      danger
+                      onClick={handleLogout}>
                       Sign Out
                     </Button>
                   </div>
-                </Card> */}
-                <Lanyard />
+                </Card>
               </Col>
 
               <Col xs={24} md={16}>

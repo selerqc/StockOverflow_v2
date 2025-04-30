@@ -27,9 +27,9 @@ import "../Lanyard/Lanyard.css";
 extend({ MeshLineGeometry, MeshLineMaterial });
 
 export default function Lanyard({
-  position = [0, 0, 30],
+  position = [0, 0, 20],
   gravity = [0, -40, 0],
-  fov = 20,
+  fov = 10,
   transparent = true,
 }) {
   return (

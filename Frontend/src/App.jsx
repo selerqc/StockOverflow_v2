@@ -37,7 +37,6 @@ const roleBasedRoutes = {
     { path: "manage-users", element: <ManageUsers /> },
     { path: "alerts", element: <Alerts /> },
     { path: "settings", element: <Settings /> },
-    { path: "*", element: <NotFound /> },
   ],
   "Business Owner": [
     { path: "businessowner-dashboard", element: <BusinessOwnerDashboard /> },
@@ -45,6 +44,7 @@ const roleBasedRoutes = {
     { path: "categories", element: <Categories /> },
     { path: "orders", element: <Orders /> },
     { path: "analytics", element: <Analytics /> },
+    { path: "settings", element: <Settings /> },
     { path: "alerts", element: <Alerts /> },
   ],
   Employee: [
@@ -52,8 +52,8 @@ const roleBasedRoutes = {
     { path: "products", element: <Products /> },
     { path: "categories", element: <Categories /> },
     { path: "alerts", element: <Alerts /> },
+    { path: "settings", element: <Settings /> },
     { path: "orders", element: <Orders /> },
-    { path: "*", element: <NotFound /> },
   ],
 };
 
@@ -61,13 +61,13 @@ function AnimatedRoutes() {
   const location = useLocation();
   const role = sessionStorage.getItem("role");
 
-  if (
-    !role &&
-    location.pathname !== "/login" &&
-    location.pathname !== "/register"
-  ) {
-    return <Navigate to='/login' replace />;
-  }
+  // if (
+  //   !role &&
+  //   location.pathname !== "/login" &&
+  //   location.pathname !== "/register"
+  // ) {
+  //   return <Navigate to='/login' replace />;
+  // }
 
   const renderRoutes = (routes) =>
     routes.map(({ path, element }) => (

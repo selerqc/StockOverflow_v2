@@ -151,6 +151,7 @@ const Orders = () => {
       title: "Customer",
       dataIndex: "customer",
       key: "customer",
+      render: (text) => text || "N/A",
     },
     {
       title: "Product",
