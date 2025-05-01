@@ -66,7 +66,7 @@ const Register = () => {
           </Title>
         </div>
         <Row justify='center' align='middle' style={{ height: "100%" }}>
-          <Col xs={20}>
+          <Col xs={20} sm={16} md={12} lg={8} xl={8} style={{boxShadow: "0 0 10px rgba(0, 0, 0, 0.2)", borderRadius: "1rem",padding: "2rem"}}>
             <div className='registration-box'>
               <Title
                 level={3}
@@ -102,7 +102,7 @@ const Register = () => {
                   flexDirection: "column",
                   gap: "1rem",
                 }}>
-                <Row gutter={16}>
+                <Row gutter={16} style={{ marginBottom: "-1rem" }}>
                   <Col xs={24} sm={12}>
                     <Form.Item
                       label='Username'
@@ -142,7 +142,7 @@ const Register = () => {
                     </Form.Item>
                   </Col>
                 </Row>
-                <Row gutter={16}>
+                <Row gutter={16}style={{ marginBottom: "-1rem" }}>
                   <Col xs={24}>
                     <Form.Item
                       label='Phone Number'
@@ -163,8 +163,8 @@ const Register = () => {
                     </Form.Item>
                   </Col>
                 </Row>
-                <Row gutter={16}>
-                  <Col xs={24}>
+                <Row gutter={16}style={{ marginBottom: "-1rem" }}>
+                  <Col xs={24} >
                     <Form.Item
                       label='Password'
                       name='password'
@@ -182,28 +182,12 @@ const Register = () => {
                     </Form.Item>
                   </Col>
                 </Row>
-                <Row gutter={16}>
+                <Row gutter={16}style={{ marginBottom: "-1rem" }}>
                   <Col xs={24}>
                     <Form.Item
                       label='Confirm Password'
                       name='confirm_password'
-                      dependencies={["password"]}
-                      rules={[
-                        {
-                          required: true,
-                          message: "Please confirm your password!",
-                        },
-                        ({ getFieldValue }) => ({
-                          validator(_, value) {
-                            if (!value || getFieldValue("password") === value) {
-                              return Promise.resolve();
-                            }
-                            return Promise.reject(
-                              new Error("Passwords do not match!")
-                            );
-                          },
-                        }),
-                      ]}>
+                    >
                       <Input.Password
                         size='large'
                         prefix={<Lock className='registration-input-icon' />}
@@ -234,7 +218,7 @@ const Register = () => {
           </Col>
         </Row>
       </Content>
-      <Sider
+      {/* <Sider
         width='60%'
         style={{
           backgroundImage: "url('../src/assets/register.png')",
@@ -245,7 +229,7 @@ const Register = () => {
         }}
         breakpoint='md'
         collapsedWidth='0'
-      />
+      /> */}
     </Layout>
   );
 };
