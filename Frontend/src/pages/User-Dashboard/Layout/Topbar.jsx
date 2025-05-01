@@ -28,7 +28,7 @@ const TopBar = ({ onMenuClick }) => {
 
   useEffect(() => {
     fetchUnreadAlerts();
-    const interval = setInterval(fetchUnreadAlerts, 1000);
+    const interval = setInterval(fetchUnreadAlerts, 2000);
     return () => clearInterval(interval);
   }, []);
 

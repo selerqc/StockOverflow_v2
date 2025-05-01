@@ -5,10 +5,11 @@ const Alerts = require("../modules/Alerts");
 
 const alertsRoute = express.Router();
 
+alertsRoute.post("/addAlerts", Alerts.AddNewAlert)
+
 alertsRoute.use(auth);
 
 alertsRoute
-  .post("/addAlerts", Alerts.AddNewAlert)
   .get("/getAlerts", Alerts.GetAllAlerts)
   .patch("/updateOneAlert/:id", Alerts.UpdateOneAlert)
   .patch("/updateManyAlert", Alerts.UpdateManyAlert)

@@ -32,22 +32,16 @@ const AlertsController = {
   },
 
   GetUnreadCount: async (req, res) => {
-    try {
+
       const unreadCount = await alertModel.countDocuments({
-        user_id: req.user._id,
         is_read: false,
       });
+
       res.status(200).json({
         status: "Unread Count",
         unreadCount,
       });
-    } catch (error) {
-      console.log(error);
-      return res.status(500).json({
-        status: "error",
-        message: error.message,
-      });
-    }
+   
   },
 
   AddNewAlert: async (req, res) => {

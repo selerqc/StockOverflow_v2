@@ -12,7 +12,10 @@ const Alerts = () => {
   const [alerts, setAlerts] = useState([]);
   const { token } = useToken();
   const { data } = useFetch(`${baseURL}/alerts/getAlerts`);
+
   useEffect(() => {
+  
+
     if (data) {
       setAlerts(data.data);
     }

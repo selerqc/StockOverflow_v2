@@ -41,8 +41,8 @@ const Register = () => {
           navigate("/login");
         }, 3000);
       })
-      .catch(() => {
-        message.error("Registration failed. Please try again.");
+      .catch((error) => {
+        message.error(error.response.data.error);
         setLoading(false);
       });
   };

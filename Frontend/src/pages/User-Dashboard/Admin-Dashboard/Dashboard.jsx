@@ -92,6 +92,8 @@ const Dashboard = () => {
   const handleQuickAction = (path) => {
     navigate(path);
   };
+ 
+
 
   return (
     <div className='dashboard-container'>

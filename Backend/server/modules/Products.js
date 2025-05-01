@@ -41,6 +41,15 @@ const ProductsController = {
 
     if (!name || !price || !category_id || !stock_level || !sku)
       throw "All fields are required";
+
+    const findDuplicateName = await productsModel.findOne({
+      name: name,
+    });
+    const findDuplicateSku = await productsModel.findOne({
+      sku: sku,
+    });
+    if (validator.contains(name,findDuplicateName)) throw "Product already exists";
+    if (findDuplicateSku) throw "SKU already exists";
     if (!validator.isNumeric(price.toString())) throw "Price must be a number";
     if (!validator.isNumeric(stock_level.toString()))
       throw "Stock level must be a number";
@@ -54,16 +63,7 @@ const ProductsController = {
     if (sku.length < 3 || sku.length > 10)
       throw new Error("SKU must be between 3 and 10 characters");
 
-    const findDuplicateName = await productsModel.findOne({
-      user_id: req.user._id,
-      name: name,
-    });
-    const findDuplicateSku = await productsModel.findOne({
-      user_id: req.user._id,
-      sku: sku,
-    });
-    if (findDuplicateName) throw "Product already exists";
-    if (findDuplicateSku) throw "SKU already exists";
+  
 
     const addProduct = await productsModel.create({
       user_id: req.user._id,

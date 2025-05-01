@@ -115,6 +115,9 @@ const Sidebar = ({ isOpen }) => {
             <NavLink to='/alerts' icon={AlertCircle}>
               Alerts
             </NavLink>
+            <NavLink to='/settings' icon={Settings}>
+              Settings
+            </NavLink>
           </>
         );
 
@@ -155,6 +158,9 @@ const Sidebar = ({ isOpen }) => {
             </NavLink>
             <NavLink to='/alerts' icon={AlertCircle}>
               Alerts
+            </NavLink>
+            <NavLink to='/settings' icon={Settings}>
+              Settings
             </NavLink>
           </>
         );
