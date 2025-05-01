@@ -1,7 +1,7 @@
 const express = require("express");
 const auth = require("../middleware/auth");
 
-const Alerts = require("../modules/Alerts");
+const Alerts = require("../controllers/alert.controller");
 
 const alertsRoute = express.Router();
 

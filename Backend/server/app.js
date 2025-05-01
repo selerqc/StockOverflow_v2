@@ -6,12 +6,12 @@ const errorHandler = require("./handler/errorHandler");
 const cors = require("cors");
 const connection = require("./config/connection");
 
-const userRoute = require("./routes/user.route");
-const productsRoute = require("./routes/products.route");
-const transactionRoute = require("./routes/transaction.route");
-const alertsRoute = require("./routes/alerts.route");
-const categoryRoute = require("./routes/category.route");
-const adminRoute = require("./routes/Admin/admin.route");
+const userRoute = require("./api/routes/user.route");
+const productsRoute = require("./api/routes/products.route");
+const transactionRoute = require("./api/routes/transaction.route");
+const alertsRoute = require("./api/routes/alerts.route");
+const categoryRoute = require("./api/routes/category.route");
+const adminRoute = require("./api/routes/admin.route");
 
 const app = express();
 

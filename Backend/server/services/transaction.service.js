@@ -2,8 +2,8 @@ const userModel = require("../models/user.model");
 const productsModel = require("../models/products.model");
 const transactionsModel = require("../models/transaction.model");
 
-const transactionsController = {
-  GetAllTransactions: async (req, res) => {
+const TransactionService = {
+  async getAllTransactions() {
     const transactions = await transactionsModel.find({}).select({
       __v: 0,
     });
@@ -28,19 +28,19 @@ const transactionsController = {
       }),
     }));
 
-    res.status(200).json({
-      message: "Transactions retrieved successfully",
-      data: transformedTransactions,
+    return {
+      transactions: transformedTransactions,
       products: products,
-    });
+    };
   },
 
-  TransactionStatus: async (req, res) => {
+  async getTransactionStatus(userId) {
     let pending = 0,
       completed = 0,
       cancelled = 0;
+      
     const transactions = await transactionsModel.find({
-      user_id: req.user._id,
+      user_id: userId,
     });
 
     transactions.forEach((transaction) => {
@@ -48,43 +48,42 @@ const transactionsController = {
       if (transaction.status === "completed") completed++;
       if (transaction.status === "cancelled") cancelled++;
     });
-    res.status(200).json({
-      message: "Pending orders retrieved successfully",
+    
+    return {
       pending,
       completed,
       cancelled,
-    });
+    };
   },
 
-  CreateIncomingOrder: async (req, res) => {
-    const { product_id, name, customer, stock_level, total_price } = req.body;
+  async createIncomingOrder(orderData, userId) {
+    const { product_id, name, customer, stock_level, total_price } = orderData;
 
-    await transactionsModel.create({
+    const transaction = await transactionsModel.create({
       product_id: product_id,
-      user_id: req.user._id,
+      user_id: userId,
       name: name,
       customer: customer,
       type: "incoming",
       stock_level: stock_level,
       total_price: total_price,
     });
+    
     await productsModel.updateOne(
-      { _id: product_id, user_id: req.user._id },
+      { _id: product_id, user_id: userId },
       { $inc: { stock_level: stock_level } }
     );
-    res.status(201).json({
-      message: "incoming order created successfully",
-      status: "success",
-    });
+    
+    return transaction;
   },
 
-  CreateOutgoingOrder: async (req, res) => {
-    const { product_id, customer, name, stock_level, total_price } = req.body;
+  async createOutgoingOrder(orderData, userId) {
+    const { product_id, customer, name, stock_level, total_price } = orderData;
 
     const product = await productsModel.findOne(
       {
         _id: product_id,
-        user_id: req.user._id,
+        user_id: userId,
       },
       {
         stock_level: 1,
@@ -92,17 +91,17 @@ const transactionsController = {
     );
 
     if (!product) {
-      return res.status(404).json({
-        message: "Product not found",
-        status: "error",
-      });
+      throw {
+        status: 404,
+        message: "Product not found"
+      };
     }
 
     if (product.stock_level < stock_level) throw "Insufficient stock ";
 
-    await transactionsModel.create({
+    const transaction = await transactionsModel.create({
       product_id: product_id,
-      user_id: req.user._id,
+      user_id: userId,
       name: name,
       customer: customer,
       type: "outgoing",
@@ -111,34 +110,30 @@ const transactionsController = {
     });
 
     await productsModel.updateOne(
-      { _id: product_id, user_id: req.user._id },
+      { _id: product_id, user_id: userId },
       { $inc: { stock_level: -stock_level } }
     );
 
-    res.status(201).json({
-      message: "outgoing order created successfully",
-      status: "success",
-    });
+    return transaction;
   },
-  UpdateOneTransaction: async (req, res) => {
-    const { status } = req.body;
+  
+  async updateTransaction(transactionId, updateData) {
+    const { status } = updateData;
 
     if (!status) throw "All fields are required";
 
     const transaction = await transactionsModel.find({
-      _id: req.params.id,
+      _id: transactionId,
     });
+    
     if (!transaction) throw "Transaction not found";
 
-    const updatedTransaction = await transactionsModel.findOneAndUpdate(
-      { _id: req.params.id },
+    return await transactionsModel.findOneAndUpdate(
+      { _id: transactionId },
       { status },
       { new: true }
     );
-    res.status(200).json({
-      message: "Transaction updated successfully",
-      transaction: updatedTransaction,
-    });
-  },
+  }
 };
-module.exports = transactionsController;
+
+module.exports = TransactionService;

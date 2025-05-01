@@ -1,26 +1,15 @@
-const mongoose = require("mongoose");
-const alertModel = require("../models/alert.model");
+const AlertService = require("../../services/alert.service");
+
 const AlertsController = {
   GetAllAlerts: async (req, res) => {
     try {
-      const alerts = await alertModel.find();
-      const transformedAlerts = alerts.map((alert) => ({
-        ...alert.toObject(),
-        createdAt: new Date(alert.createdAt).toLocaleString("en-US", {
-          year: "numeric",
-          month: "long",
-          day: "numeric",
-        }),
-      }));
-      const getUnreadAlerts = await alertModel.countDocuments({
-        is_read: false,
-      });
-
+      const result = await AlertService.getAllAlerts();
+      
       res.status(200).json({
         status: "success",
         message: "Alerts retrieved successfully",
-        data: transformedAlerts,
-        unreadAlerts: getUnreadAlerts,
+        data: result.alerts,
+        unreadAlerts: result.unreadAlerts,
       });
     } catch (error) {
       console.log(error);
@@ -32,30 +21,17 @@ const AlertsController = {
   },
 
   GetUnreadCount: async (req, res) => {
+    const unreadCount = await AlertService.getUnreadCount();
 
-      const unreadCount = await alertModel.countDocuments({
-        is_read: false,
-      });
-
-      res.status(200).json({
-        status: "Unread Count",
-        unreadCount,
-      });
-   
+    res.status(200).json({
+      status: "Unread Count",
+      unreadCount,
+    });
   },
 
   AddNewAlert: async (req, res) => {
     try {
-      const { type, message, priority, date } = req.body;
-
-      const addAlert = await alertModel.create({
-        user_id: req.user._id,
-        type,
-        message,
-        date: date,
-        is_read: false,
-        priority: priority,
-      });
+      const addAlert = await AlertService.addNewAlert(req.body, req.user._id);
 
       res.status(201).json({
         status: "success",
@@ -73,17 +49,7 @@ const AlertsController = {
 
   UpdateOneAlert: async (req, res) => {
     try {
-      const { is_read } = req.body;
-
-      const updateAlert = await alertModel.findOneAndUpdate(
-        { _id: req.params.id },
-        {
-          is_read: is_read,
-        },
-        {
-          new: true,
-        }
-      );
+      const updateAlert = await AlertService.updateAlert(req.params.id, req.body);
 
       res.status(200).json({
         status: "success",
@@ -102,12 +68,7 @@ const AlertsController = {
   UpdateManyAlert: async (req, res) => {
     try {
       const { ids } = req.body;
-
-      const updatedAlerts = await alertModel.updateMany(
-        { _id: { $in: ids } },
-        { is_read: true },
-        { new: true }
-      );
+      const updatedAlerts = await AlertService.updateManyAlerts(ids);
 
       res.status(200).json({
         status: "success",
@@ -125,9 +86,7 @@ const AlertsController = {
 
   DeleteManyAlert: async (req, res) => {
     try {
-      const deleteResult = await alertModel.deleteMany({
-        user_id: req.user._id,
-      });
+      const deleteResult = await AlertService.deleteAllAlerts(req.user._id);
 
       res.status(200).json({
         status: "success",

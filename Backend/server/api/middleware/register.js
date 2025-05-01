@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const validator = require("validator");
-const jwtManager = require("../managers/jwtManagers");
+const jwtManager = require("../../managers/jwtManagers");
 
 const register = async (req, res) => {
   const userModel = mongoose.model("users");

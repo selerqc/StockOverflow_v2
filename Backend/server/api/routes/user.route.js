@@ -4,7 +4,7 @@ const login = require("../middleware/login");
 const register = require("../middleware/register");
 const auth = require("../middleware/auth");
 
-const User = require("../modules/Users");
+const User = require("../controllers/user.controller");
 //routes
 const userRoute = new express.Router();
 
