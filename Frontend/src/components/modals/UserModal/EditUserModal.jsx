@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Modal, Form, Input, Button, message, Select } from "antd";
 import axios from "axios";
 import { useToken } from "../../../hooks/TokenContext";
@@ -7,6 +7,11 @@ import { baseURL } from "../../../../config.js";
 const EditUserModal = ({ visible, onCancel, onSubmit, initialValues }) => {
   const [form] = Form.useForm();
   const { token } = useToken();
+
+
+  useEffect(() => {
+    console.log(initialValues);
+  }, [initialValues]);
   const handleOk = () => {
     form
       .validateFields()
@@ -28,8 +33,8 @@ const EditUserModal = ({ visible, onCancel, onSubmit, initialValues }) => {
             }
           )
           .then((response) => {
-            onSubmit(response.data.data);
-            message.success(response.data.message);
+            onSubmit(response.data.user);
+
           });
 
         form.resetFields();

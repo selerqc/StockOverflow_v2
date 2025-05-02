@@ -34,17 +34,17 @@ const UserService = {
   async updateUser(userId, userData) {
     const { username, email, role } = userData;
     if (!username || !email || !role) throw "All fields are required";
-
     const user = await userModel.find({
       _id: userId,
     });
     if (!user) throw "User not found";
     
-    return await userModel.findOneAndUpdate(
+    const updatedUser = await userModel.findOneAndUpdate(
       { _id: userId },
       { username, email, role },
       { new: true }
     );
+    return updatedUser;
   },
 
   async updateLastLogin(userId) {
