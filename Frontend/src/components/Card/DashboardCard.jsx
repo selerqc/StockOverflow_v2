@@ -18,9 +18,8 @@ const DashboardCard = ({ title, value, icon: Icon, trend }) => {
           />
           {trend && (
             <Tooltip
-              title={`${Math.abs(trend.value)}% ${
-                trend.isPositive ? "increase" : "decrease"
-              }`}>
+              title={`${Math.abs(trend.value)}% ${trend.isPositive ? "increase" : "decrease"
+                }`}>
               <div className='trend-indicator'>
                 {trend.isPositive ? (
                   <ArrowUpOutlined style={{ color: "#52c41a" }} />

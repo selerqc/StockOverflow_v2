@@ -52,6 +52,7 @@ const UserService = {
       return await userModel.findOneAndUpdate(
         { _id: userId },
         {
+          status: "active",
           updatedAt: Date.now(),
         }
       );
@@ -59,7 +60,20 @@ const UserService = {
       throw error;
     }
   },
-  
+  async updateUserLogout(userId) {
+    try {
+      return await userModel.findOneAndUpdate(
+        { _id: userId },
+        {
+          status: "inactive",
+          updatedAt: Date.now(),
+        }
+      );
+    } catch (error) {
+      throw error;
+    }
+  },
+
   async getUserDashboard(userId) {
     const getUser = await userModel
       .findOne({

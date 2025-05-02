@@ -43,6 +43,7 @@ import axios from "axios";
 import { baseURL } from "../../../config.js";
 import { useToken } from "../../hooks/TokenContext.jsx";
 import useFetch from "../../hooks/useFetch";
+import { useNavigate } from "react-router-dom";
 import "./Settings.css";
 import Lanyard from "../../components/Lanyard/Lanyard.jsx";
 const { Title, Text, Paragraph } = Typography;
@@ -51,8 +52,6 @@ import { Link } from "react-router-dom";
 
 const Settings = () => {
   const { token, setToken } = useToken();
-  const [loading, setLoading] = useState(false);
-  const [saveLoading, setSaveLoading] = useState(false);
   const [exportLoading, setExportLoading] = useState(false);
   const [form] = Form.useForm();
 
@@ -66,9 +65,11 @@ const Settings = () => {
     username: "",
     email: "",
     phone: "",
+    _id: "", // Add id to store user ID
   });
 
   const { data, error, isLoading } = useFetch(`${baseURL}/users/dashboard`);
+  const navigate = useNavigate(); // Import and use the useNavigate hook for redirection
 
   useEffect(() => {
     if (error) {
@@ -76,7 +77,12 @@ const Settings = () => {
       console.error("Error fetching user data:", error);
     }
     if (data) {
-      setUserData(data.data);
+      setUserData({
+        username: data.data.username,
+        email: data.data.email,
+        phone: data.data.phone || "",
+        _id: data.data._id || "", // Store user ID for logout
+      });
       form.setFieldsValue({
         username: data.data.username,
         email: data.data.email,
@@ -85,12 +91,35 @@ const Settings = () => {
     }
   }, [data, error, form]);
 
-  const handleLogout = () => {
-    setToken(null);
+  const handleLogout = async () => {
+    try {
+      const userId = userData._id; // Get the user ID from userData
+      if (userId) {
+        await axios.patch(
+          `${baseURL}/users/updateUserLogout/${userId}`,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+      }
 
-    sessionStorage.removeItem("role");
-    sessionStorage.removeItem("user");
+
+      setToken(null);
+      sessionStorage.removeItem("role");
+      sessionStorage.removeItem("user");
+      localStorage.removeItem("token");
+      message.success("Successfully logged out");
+
+
+    } catch (error) {
+      console.error("Logout error:", error);
+      message.error("Error logging out. Please try again.");
+    }
   };
+
   const initialSettings = {
     notifications: {
       lowStock: true,
@@ -173,9 +202,8 @@ const Settings = () => {
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url;
-        a.download = `stockoverflow-export-${
-          new Date().toISOString().split("T")[0]
-        }.json`;
+        a.download = `stockoverflow-export-${new Date().toISOString().split("T")[0]
+          }.json`;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);

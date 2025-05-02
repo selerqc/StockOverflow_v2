@@ -86,7 +86,7 @@ function Login() {
         console.error(error);
       });
   };
- 
+
   return (
     <Layout style={{ height: "100vh" }}>
       <Content style={{ backgroundColor: "white", padding: "3rem" }}>
@@ -106,7 +106,7 @@ function Login() {
           </Title>
         </div>
         <Row justify='center' align='middle' style={{ height: "100%" }}>
-          <Col xs={20} sm={16} md={12} lg={8} xl={8} style={{boxShadow: "0 0 10px rgba(0, 0, 0, 0.2)", borderRadius: "1rem",padding: "2rem"}}>
+          <Col xs={20} sm={16} md={12} lg={8} xl={8} style={{ boxShadow: "0 0 10px rgba(0, 0, 0, 0.2)", borderRadius: "1rem", padding: "2rem" }}>
             <div className='login-box'>
               <Title level={3} style={{ fontWeight: 700, fontSize: "2.5rem" }}>
                 Welcome back!

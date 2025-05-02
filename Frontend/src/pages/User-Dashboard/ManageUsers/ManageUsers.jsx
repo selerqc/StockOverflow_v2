@@ -32,11 +32,11 @@ import {
 
 import AddUserModal from "../../../components/modals/UserModal/AddUserModal";
 import EditUserModal from "../../../components/modals/UserModal/EditUserModal";
-import useFetch from "../../../hooks/useFetch";
 import { baseURL } from "../../../../config";
+import axios from "axios";
 
 const { Option } = Select;
-const { RangePicker } = DatePicker;
+import { useToken } from "../../../hooks/TokenContext";
 
 const ManageUsers = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -47,6 +47,7 @@ const ManageUsers = () => {
   const [selectedUser, setSelectedUser] = useState(undefined);
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { token } = useToken();
   const [tableParams, setTableParams] = useState({
     pagination: {
       current: 1,
@@ -59,15 +60,29 @@ const ManageUsers = () => {
     sortOrder: "descend",
   });
 
-  const { data, isLoading, refetch } = useFetch(`${baseURL}/users/getUsers`);
 
   useEffect(() => {
-    if (data) {
-      setUsers(data.data);
-      setLoading(isLoading);
-    }
-  }, [data, isLoading]);
+    fetchUsers();
+    const interval = setInterval(fetchUsers, 2000);
+    return () => clearInterval(interval);
+  }, []);
 
+  const fetchUsers = async () => {
+    setLoading(true);
+    axios.get(`${baseURL}/users/getUsers`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((response) => {
+        setUsers(response.data.data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error fetching users:", error);
+        setLoading(false);
+      });
+  };
   // User statistics
   const totalUsers = users.length;
   const activeUsers = users.filter((user) => user.status === "active").length;

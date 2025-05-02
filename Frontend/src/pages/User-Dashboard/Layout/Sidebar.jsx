@@ -43,9 +43,9 @@ const Sidebar = ({ isOpen }) => {
             <button
               onClick={() => setIsInventoryOpen(!isInventoryOpen)}
               className={`inventory-toggle ${isInventoryOpen ? "active" : ""}`}>
-              <div className='flex items-center space-x-2'>
+              <div>
                 <Package size={20} />
-                <span className='nav-text'>Inventory</span>
+                <span className='nav-text' >Inventory</span>
               </div>
               <ChevronDown
                 size={16}

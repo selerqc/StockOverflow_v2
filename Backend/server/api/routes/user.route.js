@@ -23,6 +23,7 @@ userRoute
   .get("/dashboard", User.UserDashboard)
   .get("/getUsers", User.GetAllUsers)
   .post("/addNewUser", User.CreateUser)
-  .patch("/updateUser/:id", User.UpdateUser);
+  .patch("/updateUser/:id", User.UpdateUser)
+  .patch("/updateUserLogout/:id", User.updateUserLogout)
 
 module.exports = userRoute;

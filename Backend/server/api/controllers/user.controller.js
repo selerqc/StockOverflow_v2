@@ -46,7 +46,23 @@ const userController = {
       });
     }
   },
-  
+  updateUserLogout: async (req, res) => {
+    try {
+      const updatedUser = await UserService.updateUserLogout(req.params.id);
+      
+      return res.status(200).json({
+        status: "success",
+        message: "User logged out successfully",
+        data: updatedUser,
+      });
+    } catch (error) {
+      return res.status(500).json({
+        status: "error",
+        message: "Error logging out user",
+        error: error.message,
+      });
+    }
+  },
   UserDashboard: async (req, res) => {
     const dashboardData = await UserService.getUserDashboard(req.user._id);
 
