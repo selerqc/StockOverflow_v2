@@ -26,7 +26,8 @@ function Login() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { setToken, token } = useToken();
-  const role = sessionStorage.getItem("role");
+
+
   const handleLogin = async () => {
     setLoading(true);
 

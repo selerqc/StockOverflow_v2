@@ -188,13 +188,11 @@ const Settings = () => {
 
     Promise.all([getAllProducts(), getAllCategories(), getAllOrders()])
       .then(([products, categories, orders]) => {
-        const exportData = {
+        setExportData({
           products: products.data,
           categories: categories.data,
           orders: orders.data,
-        };
-        console.log("Exported Data:", exportData);
-        setExportData(exportData);
+        });
 
         const blob = new Blob([JSON.stringify(exportData, null, 2)], {
           type: "application/json",
