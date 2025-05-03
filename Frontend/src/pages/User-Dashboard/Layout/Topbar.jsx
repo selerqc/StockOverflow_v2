@@ -58,6 +58,7 @@ const TopBar = ({ onMenuClick }) => {
             <button className='profile-button'>
               <div className='profile-icon'>
                 <User size={20} />
+
               </div>
               <span className='profile-name'>
                 {sessionStorage.getItem("user").toUpperCase()}

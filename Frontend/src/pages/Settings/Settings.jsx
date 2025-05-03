@@ -65,7 +65,8 @@ const Settings = () => {
     username: "",
     email: "",
     phone: "",
-    _id: "", // Add id to store user ID
+    _id: "",
+    role: "",
   });
 
   const { data, error, isLoading } = useFetch(`${baseURL}/users/dashboard`);
@@ -81,12 +82,14 @@ const Settings = () => {
         username: data.data.username,
         email: data.data.email,
         phone: data.data.phone || "",
-        _id: data.data._id || "", // Store user ID for logout
+        _id: data.data._id || "",
+        role: data.data.role || "",
       });
       form.setFieldsValue({
         username: data.data.username,
         email: data.data.email,
         phone: data.data.phone || "No phone number",
+        role: data.data.role || "",
       });
     }
   }, [data, error, form]);
@@ -462,24 +465,7 @@ const Settings = () => {
               <Col xs={24} md={8}>
                 <Card className='profile-card' variant={false}>
                   <div className='user-avatar-container'>
-                    {/* <Badge
-                      count={
-                        <Tooltip title='Edit Profile Picture'>
-                          <Button
-                            type='primary'
-                            shape='circle'
-                            size='small'
-                            icon={<EditOutlined />}
-                            className='avatar-edit-button'
-                          />
-                        </Tooltip>
-                      }>
-                      <Avatar
-                        size={100}
-                        icon={<UserOutlined />}
-                        className='user-avatar'
-                      />
-                    </Badge> */}
+
                     <Lanyard />
                     <Title level={4}>{userData.username || "User"}</Title>
                     <Text type='secondary'>{userData.email}</Text>
@@ -499,7 +485,7 @@ const Settings = () => {
               </Col>
 
               <Col xs={24} md={16}>
-                <Card title='Account Information' bordered={false}>
+                <Card title='Account Information' variant={false}>
                   <Form
                     form={form}
                     layout='vertical'
@@ -513,12 +499,11 @@ const Settings = () => {
                         <Form.Item
                           name='username'
                           label='Username'
-                          rules={[
-                            { required: true, message: "Username is required" },
-                          ]}>
+                        >
                           <Input
                             prefix={<UserOutlined />}
                             placeholder='Username'
+                            disabled
                           />
                         </Form.Item>
                       </Col>
@@ -527,14 +512,8 @@ const Settings = () => {
                         <Form.Item
                           name='email'
                           label='Email Address'
-                          rules={[
-                            { required: true, message: "Email is required" },
-                            {
-                              type: "email",
-                              message: "Please enter a valid email",
-                            },
-                          ]}>
-                          <Input type='email' placeholder='Email address' />
+                        >
+                          <Input type='email' placeholder='Email address' disabled />
                         </Form.Item>
                       </Col>
 
@@ -547,25 +526,18 @@ const Settings = () => {
                           />
                         </Form.Item>
                       </Col>
+                      <Col xs={24} md={12}>
+                        <Form.Item name='role' label='Role'>
+                          <Input
+                            type='text'
+                            placeholder='Role'
+                            disabled
+                          />
+                        </Form.Item>
+                      </Col>
                     </Row>
 
-                    <Form.Item>
-                      <Button
-                        type='primary'
-                        icon={<SaveOutlined />}
-                        onClick={() => {
-                          form
-                            .validateFields()
-                            .then((values) => {
-                              message.success("Profile information updated");
-                            })
-                            .catch((info) => {
-                              message.error("Please check the form for errors");
-                            });
-                        }}>
-                        Update Profile
-                      </Button>
-                    </Form.Item>
+
                   </Form>
                 </Card>
               </Col>
@@ -656,29 +628,7 @@ const Settings = () => {
           </Card>
         </TabPane>
 
-        <TabPane
-          tab={
-            <span>
-              <SettingOutlined />
-              Display
-            </span>
-          }
-          key='5'>
-          <Card bordered={false}>
-            <List
-              itemLayout='horizontal'
-              dataSource={displaySettings}
-              renderItem={(item) => (
-                <List.Item actions={[item.action]}>
-                  <List.Item.Meta
-                    title={item.title}
-                    description={item.description}
-                  />
-                </List.Item>
-              )}
-            />
-          </Card>
-        </TabPane>
+
       </Tabs>
     </div>
   );

@@ -122,10 +122,19 @@ const ManageUsers = () => {
   };
 
   const handleDeleteUser = (userId) => {
-    // Here you would typically call an API to delete the user
-    // For now, we'll just update the UI
-    setUsers((prevUsers) => prevUsers.filter((user) => user._id !== userId));
-    message.success("User deleted successfully");
+    axios.delete(`${baseURL}/admin/deleteUser/${userId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((response) => {
+        setUsers((prevUsers) => prevUsers.filter((user) => user._id !== userId));
+        message.success("User deleted successfully");
+      })
+      .catch((error) => {
+        console.error("Error deleting user:", error);
+        message.error("Failed to delete user");
+      });
   };
 
   const handleTableChange = (pagination, filters, sorter) => {

@@ -67,12 +67,11 @@ const AdminService = {
     const products = await productsModel.findOne({}).select("-__v");
     const transactions = await transactionsModel.findOne({}).select("-__v");
     const alerts = await alertsModel.findOne({}).select("-__v");
-    const users = await UserModel.findOne({}).select({
+    const users = await UserModel.findOne({
+      isDeleted: false,
+    }).select({
       _v: 0,
-      password: 0,
-      createdAt: 0,
-      updatedAt: 0,
-      _id: 0,
+      password: 0,    
     });
     
     return {
@@ -96,6 +95,18 @@ const AdminService = {
       ],
     };
   },
+
+  async deleteUser(userId) {
+    const user = await UserModel.findOne({
+       _id: userId,
+     });
+     if (!user) throw "User not found";
+     const deletedUser = await UserModel.findOneAndUpdate({
+       _id: userId,
+     }, { isDeleted: true }, { new: true });
+     
+     return deletedUser;
+   },
 };
 
 module.exports = AdminService;

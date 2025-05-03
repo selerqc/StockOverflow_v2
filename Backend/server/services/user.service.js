@@ -28,11 +28,17 @@ const UserService = {
   },
 
   async getAllUsers() {
-    return await userModel.find({});
+    return await userModel.find({
+      isDeleted: false,
+    }).select({
+      _v: 0,
+      password: 0,  
+    });
   },
 
   async updateUser(userId, userData) {
     const { username, email, role } = userData;
+    console.log(userId);
     if (!username || !email || !role) throw "All fields are required";
     const user = await userModel.find({
       _id: userId,
@@ -46,7 +52,7 @@ const UserService = {
     );
     return updatedUser;
   },
-
+ 
   async updateLastLogin(userId) {
     try {
       return await userModel.findOneAndUpdate(

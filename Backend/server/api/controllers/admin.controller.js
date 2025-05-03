@@ -43,6 +43,14 @@ const AdminController = {
       data: dashboardData,
     });
   },
+  DeleteUser: async (req, res) => {
+    const deletedUser = await AdminService.deleteUser(req.params.id);
+    
+    res.status(200).json({
+      message: "User deleted successfully",
+      user: deletedUser,
+    });
+  },
 };
 
 module.exports = AdminController;

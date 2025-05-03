@@ -11,5 +11,7 @@ adminRoute
   .get("/getAllProducts", AdminController.GetAllProducts)
   .get("/getAllTransactions", AdminController.GetAllTransactions)
   .get("/getAllCategories", AdminController.GetAllCategories)
-  .get("/adminDashboard", AdminController.AdminDashboard);
+  .get("/adminDashboard", AdminController.AdminDashboard)
+  .delete("/deleteUser/:id", AdminController.DeleteUser);
+
 module.exports = adminRoute;

@@ -25,5 +25,4 @@ userRoute
   .post("/addNewUser", User.CreateUser)
   .patch("/updateUser/:id", User.UpdateUser)
   .patch("/updateUserLogout/:id", User.updateUserLogout)
-
 module.exports = userRoute;
