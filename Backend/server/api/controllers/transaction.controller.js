@@ -23,7 +23,7 @@ const transactionsController = {
   },
 
   CreateIncomingOrder: async (req, res) => {
-    await TransactionService.createIncomingOrder(req.body, req.user._id);
+    await TransactionService.createIncomingOrder(req.body);
     
     res.status(201).json({
       message: "incoming order created successfully",
@@ -33,7 +33,7 @@ const transactionsController = {
 
   CreateOutgoingOrder: async (req, res) => {
     try {
-      await TransactionService.createOutgoingOrder(req.body, req.user._id);
+      await TransactionService.createOutgoingOrder(req.body);
       
       res.status(201).json({
         message: "outgoing order created successfully",

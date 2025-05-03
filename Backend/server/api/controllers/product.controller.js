@@ -12,9 +12,10 @@ const ProductsController = {
     });
   },
 
-  GetAllProducts:  (req, res) => {
-    const products = ProductService.getAllProducts();
+  GetAllProducts:  async (req, res) => {
+  
 
+    const products = await ProductService.getAllProducts();
     res.status(200).json({
       message: "Products retrieved successfully",
       product: products,

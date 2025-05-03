@@ -31,7 +31,8 @@ const AlertsController = {
 
   AddNewAlert: async (req, res) => {
     try {
-      const addAlert = await AlertService.addNewAlert(req.body, req.user._id);
+
+      const addAlert = await AlertService.addNewAlert(req.body);
 
       res.status(201).json({
         status: "success",

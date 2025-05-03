@@ -147,14 +147,10 @@ const ManageUsers = () => {
 
   const handleRefresh = () => {
     setLoading(true);
-    refetch();
     message.info("Refreshing user data");
   };
 
-  const handleExport = () => {
-    message.success("User data exported successfully");
-    // Implement CSV/Excel export functionality here
-  };
+
 
   const resetFilters = () => {
     setSearchTerm("");
@@ -303,9 +299,7 @@ const ManageUsers = () => {
                   loading={loading}>
                   Refresh
                 </Button>
-                <Button onClick={handleExport} icon={<DownloadOutlined />}>
-                  Export
-                </Button>
+
                 <Button
                   type='primary'
                   icon={<PlusOutlined />}
@@ -363,7 +357,7 @@ const ManageUsers = () => {
               }
               style={{ marginBottom: 16 }}
               extra={
-                <Button size='small' onClick={resetFilters}>
+                <Button size='small' onClick={resetFilters} type="primary" style={{ padding: "0 8px" }}>
                   Reset
                 </Button>
               }>

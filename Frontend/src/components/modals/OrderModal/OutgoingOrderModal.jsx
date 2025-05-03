@@ -74,6 +74,7 @@ const OutgoingOrderModal = ({ order, onClose }) => {
           order || {
             product_id: "",
             name: "",
+            customer: "",
             stock_level: 0,
             total_price: 0,
             status: "pending",
@@ -93,7 +94,14 @@ const OutgoingOrderModal = ({ order, onClose }) => {
             ))}
           </Select>
         </Form.Item>
+        <Form.Item
+          label='customer'
+          name='customer'
+          rules={[{ required: true, message: "Please enter the customer name" }]}
 
+          style={{ marginBottom: "1rem" }}>
+          <Input type='text' min='0' step='0.01' />
+        </Form.Item>
         <Form.Item
           label='Quantity'
           name='stock_level'

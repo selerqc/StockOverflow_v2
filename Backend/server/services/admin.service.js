@@ -3,7 +3,6 @@ const transactionsModel = require("../models/transaction.model");
 const categoryModel = require("../models/category.model");
 const alertsModel = require("../models/alert.model");
 const UserModel = require("../models/user.model");
-
 const AdminService = {
   async getAllProducts() {
     const products = await productsModel
@@ -107,6 +106,8 @@ const AdminService = {
      
      return deletedUser;
    },
+
+   
 };
 
 module.exports = AdminService;

@@ -21,6 +21,8 @@ import {
   Tooltip,
   Alert,
   Skeleton,
+  Dropdown,
+  Menu,
 } from "antd";
 import {
   SaveOutlined,
@@ -38,6 +40,7 @@ import {
   SecurityScanOutlined,
   SyncOutlined,
   DatabaseOutlined,
+  DownOutlined,
 } from "@ant-design/icons";
 import axios from "axios";
 import { baseURL } from "../../../config.js";
@@ -185,38 +188,86 @@ const Settings = () => {
       throw error;
     }
   };
+  useEffect(() => {
+    const fetchData = async () => {
+      Promise.all([getAllProducts(), getAllCategories(), getAllOrders()])
+        .then(([products, categories, orders]) => {
+          setExportData({
+            products: products.data,
+            categories: categories.data,
+            orders: orders.data,
+          });
 
-  const handleExportData = () => {
+
+        })
+        .catch((err) => {
+          message.error("Failed to export data. Please try again.");
+          setExportLoading(false);
+        });
+    };
+    fetchData();
+  }, []);
+
+  const handleExportData = (key) => {
     setExportLoading(true);
 
-    Promise.all([getAllProducts(), getAllCategories(), getAllOrders()])
-      .then(([products, categories, orders]) => {
-        setExportData({
-          products: products.data,
-          categories: categories.data,
-          orders: orders.data,
-        });
 
-        const blob = new Blob([JSON.stringify(exportData, null, 2)], {
-          type: "application/json",
-        });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = `stockoverflow-export-${new Date().toISOString().split("T")[0]
-          }.json`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
+    if (!["json", "csv", "txt"].includes(key)) {
+      message.error("Invalid format selected. Please choose json, csv, or txt.");
+      setExportLoading(false);
+      return;
+    }
 
-        message.success("Data exported successfully!");
-        setExportLoading(false);
-      })
-      .catch((err) => {
-        message.error("Failed to export data. Please try again.");
-        setExportLoading(false);
-      });
+    let fileContent = "";
+    let fileType = "";
+    let fileExtension = "";
+
+    if (key === "json") {
+      fileContent = JSON.stringify(exportData, null, 2);
+      fileType = "application/json";
+      fileExtension = "json";
+    } else if (key === "csv") {
+      const convertToCSV = (data) => {
+        const headers = Object.keys(data[0]).join(",");
+        const rows = data.map((row) => Object.values(row).join(",")).join("\n");
+        return `${headers}\n${rows}`;
+      };
+
+      fileContent = [
+        "Products:",
+        convertToCSV(exportData.products),
+        "\nCategories:",
+        convertToCSV(exportData.categories),
+        "\nOrders:",
+        convertToCSV(exportData.orders),
+      ].join("\n\n");
+      fileType = "text/csv";
+      fileExtension = "csv";
+    } else if (key === "txt") {
+      fileContent = [
+        "Products:",
+        JSON.stringify(exportData.products, null, 2),
+        "\nCategories:",
+        JSON.stringify(exportData.categories, null, 2),
+        "\nOrders:",
+        JSON.stringify(exportData.orders, null, 2),
+      ].join("\n\n");
+      fileType = "text/plain";
+      fileExtension = "txt";
+    }
+
+    const blob = new Blob([fileContent], { type: fileType });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `stockoverflow-export-${new Date().toISOString().split("T")[0]}.${fileExtension}`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    message.success("Data exported successfully!");
+    setExportLoading(false);
   };
 
   const notificationItems = [
@@ -320,123 +371,35 @@ const Settings = () => {
         </Select>
       ),
     },
-    {
-      title: "Password Change",
-      description: "Change your account password",
-      action: (
-        <Button
-          icon={<LockOutlined />}
-          onClick={() =>
-            message.info("Password change functionality would open here")
-          }>
-          Change Password
-        </Button>
-      ),
-    },
+
   ];
 
   const dataManagementOptions = [
     {
       title: "Export All Data",
-      description: "Export your inventory, orders, and categories as JSON",
+      description: "Export your inventory, orders, and categories",
       action: (
-        <Button
-          type='primary'
-          icon={<DownloadOutlined />}
-          onClick={handleExportData}
-          loading={exportLoading}>
-          Export Data
-        </Button>
-      ),
-    },
-    {
-      title: "Backup Settings",
-      description: "Save a backup of your system settings",
-      action: (
-        <Button
-          icon={<DatabaseOutlined />}
-          onClick={() => message.info("Settings backup would run here")}>
-          Backup Settings
-        </Button>
-      ),
-    },
-    {
-      title: "Import Data",
-      description: "Import data from a JSON file",
-      action: (
-        <Upload
-          beforeUpload={(file) => {
-            message.info(`Would import data from ${file.name}`);
-            return false;
-          }}
-          showUploadList={false}>
-          <Button icon={<UploadOutlined />}>Import JSON</Button>
-        </Upload>
+        <Dropdown
+          menu={
+            <Menu
+              onClick={({ key }) => {
+                setExportLoading(true);
+                handleExportData(key);
+              }}>
+              <Menu.Item key="json">JSON</Menu.Item>
+              <Menu.Item key="csv">CSV</Menu.Item>
+              <Menu.Item key="txt">TXT</Menu.Item>
+            </Menu>
+          }
+          disabled={exportLoading}>
+          <Button type="primary" icon={<ExportOutlined />} loading={exportLoading}>
+            Export Data
+          </Button>
+        </Dropdown>
       ),
     },
   ];
 
-  const displaySettings = [
-    {
-      title: "Theme",
-      description: "Choose between light and dark theme",
-      action: (
-        <Select
-          defaultValue='light'
-          style={{ width: 120 }}
-          onChange={(value) =>
-            setSettings({
-              ...settings,
-              display: {
-                ...settings.display,
-                theme: value,
-              },
-            })
-          }>
-          <Select.Option value='light'>Light</Select.Option>
-          <Select.Option value='dark'>Dark</Select.Option>
-        </Select>
-      ),
-    },
-    {
-      title: "Compact Mode",
-      description: "Use compact view for more content on screen",
-      checked: settings.display.compactMode,
-      action: (
-        <Switch
-          checked={settings.display.compactMode}
-          onChange={(checked) =>
-            setSettings({
-              ...settings,
-              display: {
-                ...settings.display,
-                compactMode: checked,
-              },
-            })
-          }
-        />
-      ),
-    },
-    {
-      title: "High Contrast",
-      description: "Enable high contrast mode for better accessibility",
-      checked: settings.display.highContrast,
-      action: (
-        <Switch
-          checked={settings.display.highContrast}
-          onChange={(checked) =>
-            setSettings({
-              ...settings,
-              display: {
-                ...settings.display,
-                highContrast: checked,
-              },
-            })
-          }
-        />
-      ),
-    },
-  ];
 
   return (
     <div className='settings-container'>

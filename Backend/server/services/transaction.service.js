@@ -40,7 +40,7 @@ const TransactionService = {
       cancelled = 0;
       
     const transactions = await transactionsModel.find({
-      user_id: userId,
+
     });
 
     transactions.forEach((transaction) => {
@@ -56,12 +56,11 @@ const TransactionService = {
     };
   },
 
-  async createIncomingOrder(orderData, userId) {
+  async createIncomingOrder(orderData) {
     const { product_id, name, customer, stock_level, total_price } = orderData;
 
     const transaction = await transactionsModel.create({
       product_id: product_id,
-      user_id: userId,
       name: name,
       customer: customer,
       type: "incoming",
@@ -70,20 +69,20 @@ const TransactionService = {
     });
     
     await productsModel.updateOne(
-      { _id: product_id, user_id: userId },
+      { _id: product_id },
       { $inc: { stock_level: stock_level } }
     );
     
     return transaction;
   },
 
-  async createOutgoingOrder(orderData, userId) {
+  async createOutgoingOrder(orderData) {
     const { product_id, customer, name, stock_level, total_price } = orderData;
 
     const product = await productsModel.findOne(
       {
         _id: product_id,
-        user_id: userId,
+       
       },
       {
         stock_level: 1,
@@ -101,7 +100,7 @@ const TransactionService = {
 
     const transaction = await transactionsModel.create({
       product_id: product_id,
-      user_id: userId,
+
       name: name,
       customer: customer,
       type: "outgoing",
@@ -110,7 +109,7 @@ const TransactionService = {
     });
 
     await productsModel.updateOne(
-      { _id: product_id, user_id: userId },
+      { _id: product_id },
       { $inc: { stock_level: -stock_level } }
     );
 

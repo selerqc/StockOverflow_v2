@@ -69,6 +69,7 @@ const OrderModal = ({ order, onClose }) => {
         initialValues={
           order || {
             name: "",
+            customer: "",
             stock_level: 0,
             total_price: 0,
             status: "pending",
@@ -131,7 +132,7 @@ const OrderModal = ({ order, onClose }) => {
             }}>
             <Button onClick={onClose}>Cancel</Button>
             <Button type='primary' htmlType='submit'>
-              {order ? "Update Order" : "Create Order"}
+              {"Create Order"}
             </Button>
           </div>
         </Form.Item>

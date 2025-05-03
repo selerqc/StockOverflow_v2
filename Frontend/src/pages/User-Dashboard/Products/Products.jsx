@@ -189,15 +189,15 @@ const Products = () => {
   const columns = [
     ...(role === "Admin"
       ? [
-          {
-            title: "Added by",
-            dataIndex: "user_id",
-            key: "user_id",
-            render: (text) => (
-              <Tag color='blue'>{`#${text?.slice(0, 5)}...`}</Tag>
-            ),
-          },
-        ]
+        {
+          title: "Added by",
+          dataIndex: "user_id",
+          key: "user_id",
+          render: (text) => (
+            <Tag color='blue'>{`#${text?.slice(0, 5)}...`}</Tag>
+          ),
+        },
+      ]
       : []),
 
     {

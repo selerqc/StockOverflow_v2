@@ -2,11 +2,7 @@ const mongoose = require("mongoose");
 
 const alertSchema = new mongoose.Schema(
   {
-    user_id: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "users",
-      required: true,
-    },
+  
     type: {
       type: String,
       required: [true, "Type is required"],

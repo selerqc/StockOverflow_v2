@@ -1,5 +1,6 @@
 const productsModel = require("../models/products.model");
 const validator = require("validator");
+const { find } = require("../models/transaction.model");
 
 const ProductService = {
 
@@ -44,7 +45,8 @@ const ProductService = {
       sku: sku,
     });
     
-    if (validator.contains(name, findDuplicateName)) throw "Product already exists";
+    if (findDuplicateName) throw "Product already exists with this name";
+
     if (findDuplicateSku) throw "SKU already exists";
     if (!validator.isNumeric(price.toString())) throw "Price must be a number";
     if (!validator.isNumeric(stock_level.toString()))

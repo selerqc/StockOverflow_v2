@@ -34,10 +34,11 @@ const AlertService = {
 
   async addNewAlert(alertData, userId) {
     try {
+      console.log(userId); 
       const { type, message, priority, date } = alertData;
 
       return await alertModel.create({
-        user_id: userId,
+     
         type,
         message,
         date: date,
