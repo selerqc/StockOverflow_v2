@@ -5,12 +5,14 @@ import {
   EditOutlined,
   DeleteOutlined,
   ReloadOutlined,
-  FileTextOutlined,
   InfoCircleOutlined,
-  DownOutlined,
-  RightOutlined,
+  EyeOutlined,
   TagsOutlined,
-  SettingOutlined,
+  AppstoreOutlined,
+  UnorderedListOutlined,
+  SortAscendingOutlined,
+  FilterOutlined,
+  ExclamationCircleOutlined,
 } from "@ant-design/icons";
 import {
   Typography,
@@ -24,16 +26,20 @@ import {
   Skeleton,
   Tooltip,
   Space,
-  Divider,
   Badge,
   Tag,
   Row,
   Col,
-  Collapse,
   List,
   Avatar,
+  Select,
+  Segmented,
+  Statistic,
+  Progress,
+  Spin,
+  Drawer,
+  Popconfirm,
 } from "antd";
-import { Package } from "lucide-react";
 import axios from "axios";
 import CategoryModal from "../../../components/modals/CategoryModal/AddCategoryModal.jsx";
 import EditCategoryModal from "../../../components/modals/CategoryModal/EditCategoryModal.jsx";
@@ -41,8 +47,9 @@ import "./Categories.css";
 import { useToken } from "../../../hooks/TokenContext";
 import { baseURL } from "../../../../config.js";
 
-const { Panel } = Collapse;
 const { Title, Text, Paragraph } = Typography;
+const { Option } = Select;
+const { confirm } = Modal;
 
 const Categories = () => {
   const [categories, setCategories] = useState([]);
@@ -52,6 +59,12 @@ const Categories = () => {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [productCounts, setProductCounts] = useState({});
+  const [viewMode, setViewMode] = useState('grid');
+  const [sortBy, setSortBy] = useState('name');
+  const [sortOrder, setSortOrder] = useState('asc');
+  const [detailsVisible, setDetailsVisible] = useState(false);
+  const [detailsCategory, setDetailsCategory] = useState(null);
+
   const { token } = useToken();
   const role = sessionStorage.getItem("role");
 
@@ -65,7 +78,7 @@ const Categories = () => {
     setTimeout(() => {
       setLoading(false);
     }, 1000);
-  }, []);
+  }, [categories, productCounts]);
 
   const fetchCategories = async () => {
     if (role === "Admin") {
@@ -76,7 +89,10 @@ const Categories = () => {
           },
         })
         .then((response) => {
-          setCategories(response.data.data);
+          const categoriesData = response.data.data;
+          setCategories(categoriesData);
+
+
         })
         .catch((error) => {
           console.error("Error fetching categories:", error);
@@ -89,7 +105,15 @@ const Categories = () => {
           },
         })
         .then((response) => {
-          setCategories(response.data.getCategory);
+          const categoriesData = response.data.getCategory;
+          setCategories(categoriesData);
+
+          // Simulate product counts for display purposes
+          const mockProductCounts = {};
+          categoriesData.forEach(cat => {
+            mockProductCounts[cat._id] = Math.floor(Math.random() * 20);
+          });
+          setProductCounts(mockProductCounts);
         })
         .catch((error) => {
           console.error("Error fetching categories:", error);
@@ -117,14 +141,13 @@ const Categories = () => {
   };
 
   const handleDeleteCategory = async (categoryId) => {
-    Modal.confirm({
+    confirm({
       title: "Delete Category",
-      content:
-        "Are you sure you want to delete this category? This action cannot be undone.",
+      icon: <ExclamationCircleOutlined style={{ color: "red" }} />,
+      content: "Are you sure you want to delete this category? This action cannot be undone.",
       okText: "Yes, Delete",
       okType: "danger",
       cancelText: "Cancel",
-      icon: <InfoCircleOutlined style={{ color: "red" }} />,
       onOk: async () => {
         try {
           await axios.delete(
@@ -160,9 +183,18 @@ const Categories = () => {
     setSelectedCategory(undefined);
   };
 
-  const filteredCategories = categories.filter((category) =>
-    category.name?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const handleViewDetails = (category) => {
+    setDetailsCategory(category);
+    setDetailsVisible(true);
+  };
+
+  const handleSortChange = (value) => {
+    setSortBy(value);
+  };
+
+  const handleOrderChange = () => {
+    setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+  };
 
   const getTimeAgo = (dateString) => {
     const date = new Date(dateString);
@@ -186,157 +218,217 @@ const Categories = () => {
     }
   };
 
-  // Panel header render function with action buttons
-  const panelHeader = (category) => (
-    <div className='category-panel-header'>
-      <div className='panel-title'>
-        <Avatar
-          icon={<TagsOutlined />}
-          style={{ backgroundColor: "#1677ff" }}
-        />
-        <Text strong>{category.name.toUpperCase()}</Text>
-      </div>
-      <div className='panel-actions'>
-        <Badge
-          count={productCounts[category._id] || 0}
-          overflowCount={99}
-          style={{ marginRight: "16px" }}>
-          <Tag color='processing'>Products</Tag>
-        </Badge>
-        <Space>
-          <Tooltip title='Edit Category'>
-            <Button
-              type='text'
-              icon={<EditOutlined />}
-              onClick={(e) => {
-                e.stopPropagation();
-                handleEditCategory(category);
-              }}
-            />
-          </Tooltip>
-          <Tooltip title='Delete Category'>
-            <Button
-              type='text'
-              danger
-              icon={<DeleteOutlined />}
-              onClick={(e) => {
-                e.stopPropagation();
-                handleDeleteCategory(category._id);
-              }}
-            />
-          </Tooltip>
-        </Space>
-      </div>
-    </div>
-  );
 
-  // Custom expand icon
-  const expandIcon = ({ isActive }) => {
-    return isActive ? <DownOutlined /> : <RightOutlined />;
+  // Filter and sort categories
+  const filteredCategories = categories
+    .filter((category) => category.name?.toLowerCase().includes(searchTerm.toLowerCase()))
+    .sort((a, b) => {
+      let comparison = 0;
+      if (sortBy === 'name') {
+        comparison = a.name.localeCompare(b.name);
+      } else if (sortBy === 'date') {
+        comparison = new Date(b.createdAt) - new Date(a.createdAt);
+      } else if (sortBy === 'products') {
+        comparison = (productCounts[b._id] || 0) - (productCounts[a._id] || 0);
+      }
+      return sortOrder === 'asc' ? comparison : -comparison;
+    });
+
+  // Grid view renderer
+  const renderGridView = () => {
+    return (
+      <Row gutter={[16, 16]}>
+        {filteredCategories.map(category => (
+          <Col xs={24} sm={12} md={8} lg={6} key={category._id}>
+
+            <Card
+              hoverable
+              className="category-card"
+              actions={[
+                <Tooltip title="View Details">
+                  <EyeOutlined key="view" onClick={() => handleViewDetails(category)} />
+                </Tooltip>,
+                <Tooltip title="Edit Category">
+                  <EditOutlined key="edit" onClick={() => handleEditCategory(category)} />
+                </Tooltip>,
+                <Popconfirm
+                  title="Delete this category?"
+                  onConfirm={() => handleDeleteCategory(category._id)}
+                  okText="Yes"
+                  cancelText="No"
+                  placement="topRight"
+                >
+                  <Tooltip title="Delete Category">
+                    <DeleteOutlined key="delete" />
+                  </Tooltip>
+                </Popconfirm>
+              ]}
+            >
+              <Card.Meta
+
+                title={category.name.toUpperCase()}
+                description={
+                  <Space direction="vertical" size={0}>
+                    <Text type="secondary" ellipsis>
+                      {category.description || "No description"}
+                    </Text>
+                    <Text type="secondary">Updated {getTimeAgo(category.updatedAt)}</Text>
+                  </Space>
+                }
+              />
+            </Card>
+
+          </Col>
+        ))}
+      </Row>
+    );
+  };
+
+  // List view renderer
+  const renderListView = () => {
+    return (
+      <List
+        itemLayout="horizontal"
+        dataSource={filteredCategories}
+        renderItem={(category) => (
+          <List.Item
+            key={category._id}
+            actions={[
+              <Button type="text" icon={<EyeOutlined />} onClick={() => handleViewDetails(category)}>
+                View
+              </Button>,
+              <Button type="text" icon={<EditOutlined />} onClick={() => handleEditCategory(category)}>
+                Edit
+              </Button>,
+              <Button type="text" danger icon={<DeleteOutlined />} onClick={() => handleDeleteCategory(category._id)}>
+                Delete
+              </Button>
+            ]} >
+            <List.Item.Meta
+
+              title={<a onClick={() => handleViewDetails(category)}>{category.name.toUpperCase()}</a>}
+              description={
+                <Space direction="vertical" size={0}>
+                  <Text type="secondary" ellipsis style={{ maxWidth: 500 }}>
+                    {category.description || "No description available"}
+                  </Text>
+                  <Space>
+                    <Tag>Created: {new Date(category.createdAt).toLocaleDateString()}</Tag>
+                    <Tag>Updated: {getTimeAgo(category.updatedAt)}</Tag>
+                  </Space>
+                </Space>
+              }
+            />
+          </List.Item>
+        )}
+      />
+    );
   };
 
   return (
-    <div className='categories-container'>
-      <div className='page-header'>
-        <Flex justify='space-between' align='center' className='header-content'>
-          <Space direction='vertical' size={1}>
+    <div className="categories-container">
+      {/* Page Header */}
+      <Card className="page-header-card">
+        <Flex justify="space-between" align="center" wrap="wrap">
+          <Space direction="vertical" size={0}>
             <Title level={2} style={{ margin: 0 }}>
               Category Management
             </Title>
-            <Text type='secondary'>Manage your inventory categories</Text>
+            <Text type="secondary">Manage your inventory categories</Text>
           </Space>
-        </Flex>
-      </div>
-
-      <Card className='search-panel'>
-        <Space size='middle' style={{ marginBottom: "16px" }} wrap>
-          <Button
-            type='primary'
-            icon={<PlusOutlined />}
-            onClick={handleAddCategory}>
-            Add Category
-          </Button>
-          <Tooltip title='Refresh categories'>
+          <Space>
+            <Button
+              type="primary"
+              icon={<PlusOutlined />}
+              size="middle"
+              onClick={handleAddCategory}
+            >
+              Add Category
+            </Button>
             <Button
               icon={<ReloadOutlined spin={refreshing} />}
               onClick={handleRefresh}
-              loading={refreshing}>
-              {" "}
-              Refresh{" "}
+              loading={refreshing}
+            >
+              Refresh
             </Button>
-          </Tooltip>
-        </Space>
-
-        <Input
-          size='large'
-          placeholder='Search categories by name...'
-          prefix={<SearchOutlined style={{ color: "#bfbfbf" }} />}
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          allowClear
-        />
+          </Space>
+        </Flex>
       </Card>
+
+      <Card className="search-filter-card" style={{ marginBottom: 16 }}>
+        <Flex gap={16} justify="space-between" align="center" wrap="wrap">
+          <Input.Search
+            allowClear
+            placeholder="Search categories..."
+            style={{ maxWidth: 400, flexGrow: 1 }}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            prefix={<SearchOutlined />}
+          />
+
+          <Space>
+            <Select
+              defaultValue="name"
+              style={{ width: 120 }}
+              onChange={handleSortChange}
+              value={sortBy}
+            >
+              <Option value="name">Name</Option>
+              <Option value="date">Date</Option>
+              <Option value="products">Products</Option>
+            </Select>
+            <Button
+              icon={sortOrder === 'asc' ? <SortAscendingOutlined /> : <SortAscendingOutlined rotate={180} />}
+              onClick={handleOrderChange}
+            />
+            <Segmented
+              options={[
+                {
+                  value: 'grid',
+                  icon: <AppstoreOutlined />,
+                },
+                {
+                  value: 'list',
+                  icon: <UnorderedListOutlined />,
+                },
+              ]}
+              value={viewMode}
+              onChange={setViewMode}
+            />
+          </Space>
+        </Flex>
+      </Card>
+
 
       {loading ? (
         <Card>
-          <Skeleton active avatar paragraph={{ rows: 4 }} />
+          <Flex justify="center" align="center" style={{ padding: 40 }}>
+            <Spin size="large" tip="Loading categories..." />
+          </Flex>
         </Card>
       ) : filteredCategories.length > 0 ? (
-        <Collapse
-          className='categories-accordion'
-          expandIcon={expandIcon}
-          defaultActiveKey={[filteredCategories[0]?._id]}>
-          {filteredCategories.map((category) => (
-            <Panel
-              key={category._id}
-              header={panelHeader(category)}
-              className='category-panel'>
-              <div className='category-details'>
-                <Row gutter={[16, 16]}>
-                  <Col xs={24} md={12}>
-                    <Card title='Category Information' variant={false}>
-                      <List>
-                        <List.Item>
-                          <Text strong>ID:</Text>
-                          <Text copyable>{category._id}</Text>
-                        </List.Item>
-                        <List.Item>
-                          <Text strong>Created:</Text>
-                          <Text>
-                            {new Date(category.createdAt).toLocaleString()}
-                          </Text>
-                        </List.Item>
-                        <List.Item>
-                          <Text strong>Last Updated:</Text>
-                          <Text>{getTimeAgo(category.updatedAt)}</Text>
-                        </List.Item>
-                      </List>
-                    </Card>
-                  </Col>
-                  <Col xs={24} md={12}>
-                    <Card title='Description' variant={false}>
-                      <Paragraph>
-                        {category.description || "No description available"}
-                      </Paragraph>
-                    </Card>
-                  </Col>
-                </Row>
-              </div>
-            </Panel>
-          ))}
-        </Collapse>
+        <Card bodyStyle={{ padding: viewMode === 'grid' ? 30 : 30 }}>
+          {viewMode === 'grid' ? renderGridView() : renderListView()}
+        </Card>
       ) : (
-        <div className='empty-state'>
+        <Card>
           <Empty
+            image={Empty.PRESENTED_IMAGE_SIMPLE}
             description={
               searchTerm
                 ? "No categories match your search"
                 : "No categories found"
             }
-          />
-        </div>
+          >
+            <Button type="primary" icon={<PlusOutlined />} onClick={handleAddCategory}>
+              Add Category
+            </Button>
+          </Empty>
+        </Card>
       )}
 
+      {/* Category Modal */}
       {isModalOpen && selectedCategory ? (
         <EditCategoryModal
           category={selectedCategory}
@@ -356,19 +448,48 @@ const Categories = () => {
           />
         )
       )}
-    </div>
-  );
-};
 
-// Add this component to display stats
-const Statistic = ({ title, value, prefix }) => {
-  return (
-    <div style={{ textAlign: "center" }}>
-      <div style={{ fontSize: "24px", marginBottom: "8px" }}>
-        {prefix && <span style={{ marginRight: "8px" }}>{prefix}</span>}
-        {value}
-      </div>
-      <div style={{ fontSize: "14px", color: "#8c8c8c" }}>{title}</div>
+
+      <Drawer
+        title={detailsCategory?.name?.toUpperCase() || "Category Details"}
+        placement="right"
+        onClose={() => setDetailsVisible(false)}
+        open={detailsVisible}
+        width={500}
+        extra={
+          <Space>
+            <Button onClick={() => detailsCategory && handleEditCategory(detailsCategory)} icon={<EditOutlined />}>Edit</Button>
+          </Space>
+        }
+      >
+        {detailsCategory && (
+          <>
+            <Card title="Details" style={{ marginBottom: 16 }}>
+              <List>
+                <List.Item>
+                  <Text strong>Category ID:</Text>
+                  <Text copyable>{detailsCategory._id}</Text>
+                </List.Item>
+                <List.Item>
+                  <Text strong>Created:</Text>
+                  <Text>{new Date(detailsCategory.createdAt).toLocaleString()}</Text>
+                </List.Item>
+                <List.Item>
+                  <Text strong>Last Updated:</Text>
+                  <Text>{getTimeAgo(detailsCategory.updatedAt)}</Text>
+                </List.Item>
+
+              </List>
+            </Card>
+
+            <Card title="Description">
+              <Paragraph>{detailsCategory.description || "No description available"}</Paragraph>
+            </Card>
+
+
+          </>
+        )}
+      </Drawer>
     </div>
   );
 };

@@ -12,9 +12,7 @@ const Layout = () => {
       <TopBar onMenuClick={() => setIsSidebarOpen(!isSidebarOpen)} />
       <Sidebar isOpen={isSidebarOpen} />
       <main
-        className={`main-content ${
-          isSidebarOpen ? "sidebar-open" : "sidebar-closed"
-        }`}>
+        className={`main-content ${isSidebarOpen ? "sidebar-open" : "sidebar-closed"}`}>
         <Outlet />
       </main>
     </div>
