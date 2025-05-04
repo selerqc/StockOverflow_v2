@@ -27,6 +27,7 @@ import Alerts from "./pages/Alerts/Alerts";
 import Settings from "./pages/Settings/Settings";
 import EmployeeDashboard from "./pages/User-Dashboard/Employee-Dashboard/EmployeeDashboard";
 import BusinessOwnerDashboard from "./pages/User-Dashboard/BusinessOwner-Dashboard/BusinessOwner-Dashboard";
+import ManageEmployees from "./pages/User-Dashboard/ManageEmployees/ManageEmployees";
 const roleBasedRoutes = {
   Admin: [
     { path: "admin-dashboard", element: <Dashboard /> },
@@ -44,6 +45,7 @@ const roleBasedRoutes = {
     { path: "categories", element: <Categories /> },
     { path: "orders", element: <Orders /> },
     { path: "analytics", element: <Analytics /> },
+    { path: "manage-employees", element: <ManageEmployees /> },
     { path: "settings", element: <Settings /> },
     { path: "alerts", element: <Alerts /> },
   ],

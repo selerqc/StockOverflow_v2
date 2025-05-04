@@ -190,27 +190,27 @@ const Settings = () => {
   };
   useEffect(() => {
     const fetchData = async () => {
-      Promise.all([getAllProducts(), getAllCategories(), getAllOrders()])
-        .then(([products, categories, orders]) => {
-          setExportData({
-            products: products.data,
-            categories: categories.data,
-            orders: orders.data,
-          });
 
-
-        })
-        .catch((err) => {
-          message.error("Failed to export data. Please try again.");
-          setExportLoading(false);
-        });
     };
     fetchData();
   }, []);
 
   const handleExportData = (key) => {
     setExportLoading(true);
+    Promise.all([getAllProducts(), getAllCategories(), getAllOrders()])
+      .then(([products, categories, orders]) => {
+        setExportData({
+          products: products.data,
+          categories: categories.data,
+          orders: orders.data,
+        });
 
+
+      })
+      .catch((err) => {
+        message.error("Failed to export data. Please try again.");
+        setExportLoading(false);
+      });
 
     if (!["json", "csv", "txt"].includes(key)) {
       message.error("Invalid format selected. Please choose json, csv, or txt.");
@@ -226,34 +226,6 @@ const Settings = () => {
       fileContent = JSON.stringify(exportData, null, 2);
       fileType = "application/json";
       fileExtension = "json";
-    } else if (key === "csv") {
-      const convertToCSV = (data) => {
-        const headers = Object.keys(data[0]).join(",");
-        const rows = data.map((row) => Object.values(row).join(",")).join("\n");
-        return `${headers}\n${rows}`;
-      };
-
-      fileContent = [
-        "Products:",
-        convertToCSV(exportData.products),
-        "\nCategories:",
-        convertToCSV(exportData.categories),
-        "\nOrders:",
-        convertToCSV(exportData.orders),
-      ].join("\n\n");
-      fileType = "text/csv";
-      fileExtension = "csv";
-    } else if (key === "txt") {
-      fileContent = [
-        "Products:",
-        JSON.stringify(exportData.products, null, 2),
-        "\nCategories:",
-        JSON.stringify(exportData.categories, null, 2),
-        "\nOrders:",
-        JSON.stringify(exportData.orders, null, 2),
-      ].join("\n\n");
-      fileType = "text/plain";
-      fileExtension = "txt";
     }
 
     const blob = new Blob([fileContent], { type: fileType });
@@ -379,23 +351,11 @@ const Settings = () => {
       title: "Export All Data",
       description: "Export your inventory, orders, and categories",
       action: (
-        <Dropdown
-          menu={
-            <Menu
-              onClick={({ key }) => {
-                setExportLoading(true);
-                handleExportData(key);
-              }}>
-              <Menu.Item key="json">JSON</Menu.Item>
-              <Menu.Item key="csv">CSV</Menu.Item>
-              <Menu.Item key="txt">TXT</Menu.Item>
-            </Menu>
-          }
-          disabled={exportLoading}>
-          <Button type="primary" icon={<ExportOutlined />} loading={exportLoading}>
-            Export Data
-          </Button>
-        </Dropdown>
+
+        <Button type="primary" icon={<ExportOutlined />} loading={exportLoading} onClick={() => handleExportData("json")}>
+          Export Data
+        </Button>
+
       ),
     },
   ];

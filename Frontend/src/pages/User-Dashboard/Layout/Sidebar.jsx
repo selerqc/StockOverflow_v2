@@ -75,6 +75,7 @@ const Sidebar = ({ isOpen }) => {
             <NavLink to='/manage-users' icon={Users}>
               Manage Users
             </NavLink>
+
             <NavLink to='/settings' icon={Settings}>
               Settings
             </NavLink>
@@ -158,6 +159,9 @@ const Sidebar = ({ isOpen }) => {
             </NavLink>
             <NavLink to='/alerts' icon={AlertCircle}>
               Alerts
+            </NavLink>
+            <NavLink to='/manage-employees' icon={Users}>
+              Manage Employees
             </NavLink>
             <NavLink to='/settings' icon={Settings}>
               Settings

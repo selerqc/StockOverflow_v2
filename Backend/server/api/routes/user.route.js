@@ -11,7 +11,9 @@ const userRoute = new express.Router();
 userRoute
   .post("/register", register)
   .post("/login", login)
-  .patch("/updateLastLogin/:id", User.UpdateLastLogin);
+  .patch("/updateLastLogin/:id", User.UpdateLastLogin)
+  .post("/addManyEmployee", User.AddManyEmployees)
+
 //middleware
 //everything under the authentication will be controlled
 
@@ -25,4 +27,5 @@ userRoute
   .post("/addNewUser", User.CreateUser)
   .patch("/updateUser/:id", User.UpdateUser)
   .patch("/updateUserLogout/:id", User.updateUserLogout)
+  .get("/getEmployee", User.GetEmployee)
 module.exports = userRoute;

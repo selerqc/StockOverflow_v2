@@ -18,7 +18,14 @@ const userController = {
       data: allUsers,
     });
   },
-
+  GetEmployee: async (req, res) => {
+    const allEmployee = await UserService.getEmployee();
+    
+    res.status(200).json({
+      message: "All Employee fetched successfully",
+      data: allEmployee,
+    });
+  },
   UpdateUser: async (req, res) => {
 
     const updatedUser = await UserService.updateUser(req.params.id, req.body);
@@ -73,6 +80,17 @@ const userController = {
     });
   },
 
+  AddManyEmployees: async (req, res) => {
+    const users = Array.isArray(req.body) ? req.body : [];
+
+    const createdUsers = await UserService.addManyEmployee(users);
+
+    res.status(201).json({
+      status: "success",
+      message: "Users added successfully",
+      users: createdUsers,
+    });
+  }
 
 };
 

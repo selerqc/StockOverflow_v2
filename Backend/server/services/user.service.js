@@ -1,6 +1,7 @@
 const userModel = require("../models/user.model");
 const productsModel = require("../models/products.model");
 const transactionsModel = require("../models/transaction.model");
+const bcrypt = require("bcrypt");
 
 const UserService = {
   async createUser(userData) {
@@ -13,7 +14,7 @@ const UserService = {
       throw "Password must be atleast 8 characters long ";
 
     if (password !== confirm_password) throw "Password does not match";
-
+    const hashedPassword = await bcrypt.hash(password, 12);
     const containDuplicate = await userModel.findOne({
       email: email,
     });
@@ -23,7 +24,7 @@ const UserService = {
       username: username,
       email: email,
       phone: phone,
-      password: password,
+      password: hashedPassword,
     });
   },
 
@@ -35,7 +36,31 @@ const UserService = {
       password: 0,  
     });
   },
+  async getEmployee() {
+    return await userModel.find({
+      role: "Employee",
+      isDeleted: false,
+    }).select({
+      _v: 0,
+      password: 0,  
+    });
+  },
+  async addManyEmployee(userData) {
 
+     const userToAdd = userData.map(async (user) => {
+      const { username, email, phone, password } = user;
+      const hashedPassword = await bcrypt.hash(password, 12);
+
+      return userModel.create({
+        username: username,
+        email: email,
+        phone: phone, 
+        password: hashedPassword,
+      });
+    });
+    return await Promise.all(userToAdd);
+
+  },
   async updateUser(userId, userData) {
     const { username, email, role } = userData;
     console.log(userId);
