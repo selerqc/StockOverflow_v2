@@ -28,6 +28,7 @@ const ProductService = {
     return await productsModel
       .find({})
       .populate("category_id", "name")
+      .populate("user_id", "username")
       .select("-__v");
   },
 
@@ -44,7 +45,7 @@ const ProductService = {
     const findDuplicateSku = await productsModel.findOne({
       sku: sku,
     });
-    
+
     if (findDuplicateName) throw "Product already exists with this name";
 
     if (findDuplicateSku) throw "SKU already exists";
@@ -73,7 +74,7 @@ const ProductService = {
     return addProduct;
   },
 
- 
+
   async addManyProducts(products, userId) {
     if (!products || products.length === 0) throw "Products are required";
 
@@ -89,7 +90,7 @@ const ProductService = {
         sku: sku,
       });
     });
-    
+
     return await Promise.all(productsToAdd);
   },
 
@@ -127,13 +128,13 @@ const ProductService = {
     return updatedProduct;
   },
 
- 
+
   async deleteProduct(productId, userId) {
     const isProductExists = await productsModel.findOne({
       user_id: userId,
       _id: productId,
     });
-    
+
     if (!isProductExists) throw "Product not found";
 
     return await productsModel.findOneAndDelete({

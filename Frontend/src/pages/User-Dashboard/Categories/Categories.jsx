@@ -246,33 +246,20 @@ const Categories = () => {
               className="category-card"
               actions={[
                 <Tooltip title="View Details">
-                  <EyeOutlined key="view" onClick={() => handleViewDetails(category)} />
+                  <Text type="secondary" strong onClick={() => handleViewDetails(category)}>View Details</Text>
+
                 </Tooltip>,
-                <Tooltip title="Edit Category">
-                  <EditOutlined key="edit" onClick={() => handleEditCategory(category)} />
-                </Tooltip>,
-                <Popconfirm
-                  title="Delete this category?"
-                  onConfirm={() => handleDeleteCategory(category._id)}
-                  okText="Yes"
-                  cancelText="No"
-                  placement="topRight"
-                >
-                  <Tooltip title="Delete Category">
-                    <DeleteOutlined key="delete" />
-                  </Tooltip>
-                </Popconfirm>
+
               ]}
             >
               <Card.Meta
-
                 title={category.name.toUpperCase()}
                 description={
                   <Space direction="vertical" size={0}>
                     <Text type="secondary" ellipsis>
                       {category.description || "No description"}
                     </Text>
-                    <Text type="secondary">Updated {getTimeAgo(category.updatedAt)}</Text>
+                    <Text type="secondary">Updated:{getTimeAgo(category.updatedAt)}</Text>
                   </Space>
                 }
               />
@@ -459,6 +446,7 @@ const Categories = () => {
         extra={
           <Space>
             <Button onClick={() => detailsCategory && handleEditCategory(detailsCategory)} icon={<EditOutlined />}>Edit</Button>
+            <Button onClick={() => handleDeleteCategory(detailsCategory._id)} icon={<DeleteOutlined />} danger>Delete</Button>
           </Space>
         }
       >

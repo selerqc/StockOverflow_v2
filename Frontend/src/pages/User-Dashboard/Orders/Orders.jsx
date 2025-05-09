@@ -4,7 +4,7 @@ import {
   ArrowDownOutlined,
   HomeFilled,
 } from "@ant-design/icons";
-import { Button, Table, Select, Skeleton, Tabs } from "antd";
+import { Button, Table, Select, Skeleton, Tabs, Tag, Tooltip, Badge, Typography } from "antd";
 import axios from "axios";
 import { useToken } from "../../../hooks/TokenContext";
 import { baseURL } from "../../../../config.js";
@@ -12,6 +12,8 @@ import IncomingOrderModal from "../../../components/modals/OrderModal/IncomingOr
 import OutgoingOrderModal from "../../../components/modals/OrderModal/OutgoingOrderModal";
 import ViewOrderDetails from "../../../components/modals/OrderModal/ViewOrderDetails.jsx";
 import "./Orders.css";
+
+const { Text } = Typography;
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
@@ -35,6 +37,7 @@ const Orders = () => {
           },
         })
         .then((response) => {
+          console.log(response.data.data);
           setOrders(response.data.data);
         })
         .catch((error) => {
@@ -57,7 +60,7 @@ const Orders = () => {
     getTransactions();
     const interval = setInterval(() => {
       getTransactions();
-    }, 1000);
+    }, 2000);
     return () => clearInterval(interval);
   }, []);
 
@@ -132,31 +135,32 @@ const Orders = () => {
   const columns = [
     ...(role === "Admin"
       ? [
-          {
-            title: "Ordered By",
-            dataIndex: "user_id",
-            key: "user_id",
-            render: (text) => `#${text.slice(0, 9)}...`,
-          },
-        ]
+        {
+          title: "Ordered By",
+          dataIndex: "user_id",
+          key: "user_id",
+          render: (text) => <Tag color='blue'>{`#${text.slice(0, 5)}...`}</Tag>,
+        },
+      ]
       : []),
 
     {
       title: "Order ID",
       dataIndex: "_id",
       key: "_id",
-      render: (text) => `#${text.slice(0, 5)}...`,
+      render: (text) => <Text code>{`#${text.slice(0, 5)}...`}</Text>,
     },
     {
       title: "Customer",
       dataIndex: "customer",
       key: "customer",
-      render: (text) => text || "N/A",
+      render: (text) => text ? <Text strong>{text}</Text> : "N/A",
     },
     {
       title: "Product",
       dataIndex: "name",
       key: "name",
+      render: (text) => <Text>{text}</Text>,
     },
     {
       title: "Type",
@@ -177,17 +181,28 @@ const Orders = () => {
       title: "Quantity",
       dataIndex: "stock_level",
       key: "stock_level",
+      render: (stock_level) => (
+        <Tooltip title={stock_level <= 20 ? "Low stock" : "Sufficient stock"}>
+          <Badge
+            count={stock_level}
+            style={{
+              backgroundColor: stock_level <= 20 ? "#ff4d4f" : "#52c41a",
+            }}
+          />
+        </Tooltip>
+      ),
     },
     {
       title: "Total Price",
       dataIndex: "total_price",
       key: "total_price",
-      render: (price) => `$${price}`,
+      render: (price) => <Text type='success'>${price}</Text>,
     },
     {
       title: "Date",
       dataIndex: "createdAt",
       key: "createdAt",
+      render: (date) => <Text>{date}</Text>,
     },
     {
       title: "Status",
@@ -230,7 +245,7 @@ const Orders = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setLoading(false);
-    }, 1500);
+    }, 2000); // Added a 2 seconds delay
     return () => clearTimeout(timer);
   }, [loading]);
 
@@ -266,6 +281,8 @@ const Orders = () => {
             columns={columns}
             rowKey='_id'
             pagination={{ pageSize: 10 }}
+            bordered
+            scroll={{ x: 1200 }} // Adjusted the scroll width to fix table size
           />
         )}
       </div>

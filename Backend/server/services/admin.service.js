@@ -8,6 +8,7 @@ const AdminService = {
     const products = await productsModel
       .find({})
       .populate("category_id", "name")
+      .populate("user_id", "username")
       .select("-__v");
 
     const lowStockCount = await productsModel.countDocuments({
@@ -20,7 +21,7 @@ const AdminService = {
       lowStockCount,
     };
   },
-  
+
   async getAllTransactions() {
     let pending = 0;
     const transactions = await transactionsModel.find({}).select({
@@ -35,7 +36,7 @@ const AdminService = {
       price: 0,
       category: 0,
       sku: 0,
-    });
+    })
 
     const transformedTransactions = transactions.map((transaction) => ({
       ...transaction.toObject(),
@@ -45,12 +46,13 @@ const AdminService = {
         month: "long",
         day: "numeric",
       }),
+
     }));
-    
+
     transactions.forEach((transaction) => {
       if (transaction.status === "pending") pending++;
     });
-    
+
     return {
       transactions: transformedTransactions,
       products,
@@ -61,7 +63,7 @@ const AdminService = {
   async getAllCategories() {
     return await categoryModel.find({}).select({ _v: 0 });
   },
-  
+
   async getAdminDashboard() {
     const products = await productsModel.findOne({}).select("-__v");
     const transactions = await transactionsModel.findOne({}).select("-__v");
@@ -70,9 +72,9 @@ const AdminService = {
       isDeleted: false,
     }).select({
       _v: 0,
-      password: 0,    
+      password: 0,
     });
-    
+
     return {
       recentActivities: [
         {
@@ -97,17 +99,17 @@ const AdminService = {
 
   async deleteUser(userId) {
     const user = await UserModel.findOne({
-       _id: userId,
-     });
-     if (!user) throw "User not found";
-     const deletedUser = await UserModel.findOneAndUpdate({
-       _id: userId,
-     }, { isDeleted: true }, { new: true });
-     
-     return deletedUser;
-   },
+      _id: userId,
+    });
+    if (!user) throw "User not found";
+    const deletedUser = await UserModel.findOneAndUpdate({
+      _id: userId,
+    }, { isDeleted: true }, { new: true });
 
-   
+    return deletedUser;
+  },
+
+
 };
 
 module.exports = AdminService;

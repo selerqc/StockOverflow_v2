@@ -16,7 +16,8 @@ const TransactionService = {
       price: 0,
       category: 0,
       sku: 0,
-    });
+    })
+
 
     const transformedTransactions = transactions.map((transaction) => ({
       ...transaction.toObject(),
@@ -38,7 +39,7 @@ const TransactionService = {
     let pending = 0,
       completed = 0,
       cancelled = 0;
-      
+
     const transactions = await transactionsModel.find({
 
     });
@@ -48,7 +49,7 @@ const TransactionService = {
       if (transaction.status === "completed") completed++;
       if (transaction.status === "cancelled") cancelled++;
     });
-    
+
     return {
       pending,
       completed,
@@ -67,12 +68,12 @@ const TransactionService = {
       stock_level: stock_level,
       total_price: total_price,
     });
-    
+
     await productsModel.updateOne(
       { _id: product_id },
       { $inc: { stock_level: stock_level } }
     );
-    
+
     return transaction;
   },
 
@@ -82,7 +83,7 @@ const TransactionService = {
     const product = await productsModel.findOne(
       {
         _id: product_id,
-       
+
       },
       {
         stock_level: 1,
@@ -115,7 +116,7 @@ const TransactionService = {
 
     return transaction;
   },
-  
+
   async updateTransaction(transactionId, updateData) {
     const { status } = updateData;
 
@@ -124,7 +125,7 @@ const TransactionService = {
     const transaction = await transactionsModel.find({
       _id: transactionId,
     });
-    
+
     if (!transaction) throw "Transaction not found";
 
     return await transactionsModel.findOneAndUpdate(

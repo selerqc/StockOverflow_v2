@@ -27,6 +27,7 @@ import {
   Row,
   Col,
   Statistic,
+  Skeleton,
 } from "antd";
 import AddProductModal from "../../../components/modals/ProductModal/AddProductModal";
 import EditProductModal from "../../../components/modals/ProductModal/EditProductModal";
@@ -57,6 +58,13 @@ const Products = () => {
   const role = sessionStorage.getItem("role");
 
   useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 2000); // Added a 2 seconds delay
+    return () => clearTimeout(timer);
+  }, [loading]);
+
+  useEffect(() => {
     fetchProducts();
     const interval = setInterval(fetchProducts, 10000); // Reduced polling frequency
     return () => clearInterval(interval);
@@ -72,6 +80,7 @@ const Products = () => {
         })
         .then((response) => {
           const productsData = response.data.data;
+          console.log("Products Data:", productsData);
           setProducts(productsData);
           calculateStats(productsData);
           setLoading(false);
@@ -191,10 +200,10 @@ const Products = () => {
       ? [
         {
           title: "Added by",
-          dataIndex: "user_id",
+          dataIndex: ["user_id", "username"],
           key: "user_id",
-          render: (text) => (
-            <Tag color='blue'>{`#${text?.slice(0, 5)}...`}</Tag>
+          render: (username) => (
+            <Tag color='blue'>{`#${username}`}</Tag>
           ),
         },
       ]
@@ -359,19 +368,23 @@ const Products = () => {
           </Col>
         </Row>
 
-        <Table
-          columns={columns}
-          dataSource={filteredProducts}
-          rowKey='_id'
-          loading={loading}
-          pagination={{
-            pageSize: 10,
-            showSizeChanger: true,
-            showTotal: (total) => `Total ${total} products`,
-          }}
-          bordered
-          scroll={{ x: "max-content" }}
-        />
+        {loading ? (
+          <Skeleton active />
+        ) : (
+          <Table
+            columns={columns}
+            dataSource={filteredProducts}
+            rowKey='_id'
+            loading={loading}
+            pagination={{
+              pageSize: 10,
+              showSizeChanger: true,
+              showTotal: (total) => `Total ${total} products`,
+            }}
+            bordered
+            scroll={{ x: "max-content" }}
+          />
+        )}
       </Card>
 
       {isAddModalOpen && (
