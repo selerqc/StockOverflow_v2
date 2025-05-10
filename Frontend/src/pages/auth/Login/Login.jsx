@@ -26,11 +26,15 @@ function Login() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { setToken, token } = useToken();
+  const [rememberMe, setRememberMe] = useState(false);
 
 
   const handleLogin = async () => {
     setLoading(true);
-
+    if (rememberMe) {
+      sessionStorage.setItem("email", email);
+      sessionStorage.setItem("password", password);
+    }
     await axios
       .post(`${baseURL}/users/login`, {
         email: email,
@@ -177,8 +181,9 @@ function Login() {
                           <Form.Item
                             name='remember'
                             valuePropName='checked'
-                            noStyle>
-                            <Checkbox>Remember me</Checkbox>
+                            noStyle
+                          >
+                            <Checkbox checked={rememberMe} onChange={(e) => setRememberMe(e.target.checked)}>Remember me</Checkbox>
                           </Form.Item>
                         </Col>
                       </Row>
