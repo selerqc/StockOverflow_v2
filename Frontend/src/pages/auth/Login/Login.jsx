@@ -21,19 +21,20 @@ import { useToken } from "../../../hooks/TokenContext";
 import { baseURL } from "../../../../config";
 
 function Login() {
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState(() => sessionStorage.getItem("email") || "");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { setToken, token } = useToken();
   const [rememberMe, setRememberMe] = useState(false);
 
-
   const handleLogin = async () => {
     setLoading(true);
+
     if (rememberMe) {
       sessionStorage.setItem("email", email);
-      sessionStorage.setItem("password", password);
+    } else {
+      sessionStorage.removeItem("email");
     }
     await axios
       .post(`${baseURL}/users/login`, {
@@ -47,6 +48,7 @@ function Login() {
 
         setToken(response.data.accessToken);
         sessionStorage.setItem("user", response.data.data.username);
+        sessionStorage.setItem("email", email);
         message.success(
           `Login successful, Welcome back ${response.data.data.username}`
         );
@@ -71,10 +73,14 @@ function Login() {
         setLoading(false);
       });
   };
-
   const onFinish = (values) => {
     setEmail(values.email);
     setPassword(values.password);
+    const remember = values.remember || false;
+    setRememberMe(remember);
+    if (!remember) {
+      sessionStorage.removeItem("email");
+    }
     handleLogin();
   };
   const updateLastLogin = async (id) => {
@@ -96,9 +102,7 @@ function Login() {
     <Layout style={{ height: "100vh" }}>
       <Content style={{ backgroundColor: "white", padding: "3rem" }}>
         <div className='login-logo-container'>
-          <div className='login-logo'>
-            <Package className='login-icon-large' />
-          </div>
+
           <Title
             level={3}
             style={{
@@ -113,6 +117,8 @@ function Login() {
         <Row justify='center' align='middle' style={{ height: "100%" }}>
           <Col xs={20} sm={16} md={12} lg={8} xl={8} style={{ boxShadow: "0 0 10px rgba(0, 0, 0, 0.2)", borderRadius: "1rem", padding: "2rem" }}>
             <div className='login-box'>
+
+
               <Title level={3} style={{ fontWeight: 700, fontSize: "2.5rem" }}>
                 Welcome back!
               </Title>
@@ -123,89 +129,94 @@ function Login() {
 
             <div className='login-form-container'>
               <div className='login-form-box'>
-                <Space direction='vertical' style={{ width: "100%" }}>
-                  <Form
-                    name='login'
-                    initialValues={{ remember: true }}
-                    layout='vertical'
-                    onFinish={onFinish}
-                    autoComplete='on'>
-                    <Form.Item
-                      name='email'
-                      label='Email'
-                      style={{ marginBottom: "0.5rem" }}
-                      rules={[
-                        {
-                          required: true,
-                          message: "Please enter your email address",
-                          type: "email",
-                        },
-                      ]}
-                      hasFeedback>
-                      <Input
-                        size='large'
-                        prefix={<Mail className='login-icon-small' />}
-                        placeholder='Enter your email address'
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                      />
-                    </Form.Item>
+                <Space direction='vertical' style={{ width: "100%" }}>                  <Form
+                  name='login'
+                  initialValues={{
+                    remember: true,
+                    email: sessionStorage.getItem("email") || ""
+                  }}
+                  layout='vertical'
+                  onFinish={onFinish}
+                  autoComplete='on'>
+                  <Form.Item
+                    name='email'
+                    label='Email'
 
-                    <Form.Item
-                      name='password'
-                      label='Password'
-                      rules={[
-                        {
-                          required: true,
-                          message: "Please enter your password",
-                        },
-                        {
-                          min: 8,
-                          message: "Password must be at least 8 characters",
-                        },
-                      ]}
-                      style={{ marginBottom: "1rem" }}
-                      hasFeedback>
-                      <Input.Password
-                        size='large'
-                        prefix={<Lock className='login-icon-small' />}
-                        placeholder='Enter password'
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                      />
-                    </Form.Item>
+                    style={{ marginBottom: "0.5rem" }}
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please enter your email address",
+                        type: "email",
+                        whitespace: true,
+                      },
+                    ]}
+                    hasFeedback>
+                    <Input
+                      size='large'
+                      prefix={<Mail className='login-icon-small' />}
+                      type='email'
+                      placeholder='Enter your email address'
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                    />
+                  </Form.Item>
 
-                    <Form.Item style={{ marginBottom: "1rem" }}>
-                      <Row justify='space-between' align='middle'>
-                        <Col>
-                          <Form.Item
-                            name='remember'
-                            valuePropName='checked'
-                            noStyle
-                          >
-                            <Checkbox checked={rememberMe} onChange={(e) => setRememberMe(e.target.checked)}>Remember me</Checkbox>
-                          </Form.Item>
-                        </Col>
-                      </Row>
-                    </Form.Item>
+                  <Form.Item
+                    name='password'
+                    label='Password'
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please enter your password",
+                      },
+                      {
+                        min: 8,
+                        message: "Password must be at least 8 characters",
+                      },
+                    ]}
+                    style={{ marginBottom: "1rem" }}
+                    hasFeedback>
+                    <Input.Password
+                      size='large'
+                      prefix={<Lock className='login-icon-small' />}
+                      placeholder='Enter password'
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                    />
+                  </Form.Item>
+                  <Form.Item style={{ marginBottom: "1rem" }}>
+                    <Row justify='space-between' align='middle'>
+                      <Col>
+                        <Form.Item
+                          name='remember'
+                          valuePropName='checked'
+                          noStyle
+                        >
+                          <Checkbox onChange={(e) => setRememberMe(e.target.checked)}>Remember me</Checkbox>
+                        </Form.Item>
+                      </Col>
+                    </Row>
+                  </Form.Item>
 
-                    <Form.Item>
-                      <Button
-                        block
-                        htmlType='submit'
-                        loading={loading}
-                        style={{
-                          backgroundColor: "#4f46e5",
-                          color: "#fff",
-                          borderRadius: "0.5rem",
-                          height: "2.5rem",
-                          fontSize: "1rem",
-                          fontWeight: 600,
-                        }}>
-                        {loading ? "Logging in..." : "Log in"}
-                      </Button>
-                    </Form.Item>
-                  </Form>
+
+                  <Form.Item>
+                    <Button
+                      block
+                      htmlType='submit'
+                      loading={loading}
+                      style={{
+                        backgroundColor: "#4f46e5",
+                        color: "#fff",
+                        borderRadius: "0.5rem",
+                        height: "2.5rem",
+                        fontSize: "1rem",
+                        fontWeight: 600,
+                      }}>
+                      {loading ? "Logging in..." : "Log in"}
+                    </Button>
+                  </Form.Item>
+                </Form>
                   <hr />
                   <Text
                     type='secondary'
@@ -236,7 +247,7 @@ function Login() {
           backgroundPosition: "center",
           backgroundColor: "#6c46f3",
         }}></Sider> */}
-    </Layout>
+    </Layout >
   );
 }
 
