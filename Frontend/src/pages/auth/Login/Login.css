@@ -3,16 +3,16 @@
   flex-direction: column;
   max-width: 550px;
   width: 100%;
-  /* margin: 0 auto; */
   text-align: left;
-  margin-bottom: 2rem;
-
+  margin-bottom: 1rem;
+  animation: fadeIn 0.5s ease-in-out;
 }
 
 .login-form-container {
   max-width: 450px;
   width: 100%;
   margin: 0 auto;
+  animation: slideUp 0.5s ease-in-out;
 }
 
 .login-logo-container {
@@ -23,18 +23,31 @@
   position: absolute;
   top: 1rem;
   left: 1rem;
-padding: 1rem;
-  
+  padding: 1rem;
+  animation: fadeIn 0.8s ease-in-out;
 }
 
-.login-logo {
-  background-color: #4f46e5;
-  padding: 0.5rem;
-  border-radius: 0.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+
 
 .login-icon-large {
   height: 2rem;

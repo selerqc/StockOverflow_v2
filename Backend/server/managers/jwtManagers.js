@@ -5,6 +5,7 @@ module.exports = jwtManager = (user) => {
     {
       _id: user._id,
       username: user.username,
+      role: user.role,
     },
     process.env.jwt_salt
   );

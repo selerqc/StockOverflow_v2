@@ -8,9 +8,9 @@ const CategoryService = {
       user_id: userId,
       name: name,
     });
-    
+
     if (findDuplicateName) throw "Category already exists";
-    
+
     return await categoryModel.create({
       user_id: userId,
       name,
@@ -32,7 +32,7 @@ const CategoryService = {
     );
 
     if (!updatedCategory) throw "Category not found";
-    
+
     return updatedCategory;
   },
 
@@ -43,25 +43,22 @@ const CategoryService = {
     });
 
     if (!deletedCategory) throw "Category not found";
-    
+
     return deletedCategory;
   },
-  
+
   async addManyCategories(categories, userId) {
-    if (!Array.isArray(categories)) {
-      throw "Categories must be an array";
-    }
-    
+
     const categoryPromises = categories.map(category => {
       const { name, description } = category;
-      
+
       return categoryModel.create({
         user_id: userId,
         name,
         description,
       });
     });
-    
+
     return await Promise.all(categoryPromises);
   }
 };

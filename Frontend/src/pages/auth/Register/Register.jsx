@@ -49,11 +49,9 @@ const Register = () => {
 
   return (
     <Layout style={{ height: "100vh" }}>
-      <Content style={{ backgroundColor: "white", padding: "2rem" }}>
+      <Content style={{ padding: "2rem" }}>
         <div className='login-logo-container'>
-          <div className='login-logo'>
-            <Package className='login-icon-large' />
-          </div>
+
           <Title
             level={3}
             style={{
@@ -66,25 +64,42 @@ const Register = () => {
           </Title>
         </div>
         <Row justify='center' align='middle' style={{ height: "100%" }}>
-          <Col xs={20} sm={16} md={12} lg={8} xl={8} style={{boxShadow: "0 0 10px rgba(0, 0, 0, 0.2)", borderRadius: "1rem",padding: "2rem"}}>
+          <Col xs={20} sm={16} md={12} lg={8} xl={8} style={{
+            boxShadow: "0 0 20px rgba(79, 70, 229, 0.1)",
+            borderRadius: "1rem",
+            padding: "2.5rem",
+            backgroundColor: "white",
+            transition: "transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out"
+          }} className="registration-card">
             <div className='registration-box'>
               <Title
                 level={3}
                 style={{
                   fontWeight: 700,
                   fontSize: "2.5rem",
+                  background: "linear-gradient(45deg, #4f46e5, #6366f1)",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent"
                 }}>
                 Create an account
               </Title>
-              <Text>
+              <Text style={{
+                marginTop: "0.5rem",
+                fontSize: "1.1rem"
+              }}>
                 <Text style={{ color: "#6b7280" }}>
                   Already have an account?{" "}
                 </Text>
-
                 <Text>
                   <Link
                     to='/login'
-                    style={{ color: "#4f46e5", fontWeight: 600 }}>
+                    style={{
+                      color: "#4f46e5",
+                      fontWeight: 600,
+                      transition: "color 0.3s ease"
+                    }}
+                    onMouseOver={(e) => e.target.style.color = "#6366f1"}
+                    onMouseOut={(e) => e.target.style.color = "#4f46e5"}>
                     Log in
                   </Link>
                 </Text>
@@ -142,7 +157,7 @@ const Register = () => {
                     </Form.Item>
                   </Col>
                 </Row>
-                <Row gutter={16}style={{ marginBottom: "-1rem" }}>
+                <Row gutter={16} style={{ marginBottom: "-1rem" }}>
                   <Col xs={24}>
                     <Form.Item
                       label='Phone Number'
@@ -163,7 +178,7 @@ const Register = () => {
                     </Form.Item>
                   </Col>
                 </Row>
-                <Row gutter={16}style={{ marginBottom: "-1rem" }}>
+                <Row gutter={16} style={{ marginBottom: "-1rem" }}>
                   <Col xs={24} >
                     <Form.Item
                       label='Password'
@@ -182,7 +197,7 @@ const Register = () => {
                     </Form.Item>
                   </Col>
                 </Row>
-                <Row gutter={16}style={{ marginBottom: "-1rem" }}>
+                <Row gutter={16} style={{ marginBottom: "-1rem" }}>
                   <Col xs={24}>
                     <Form.Item
                       label='Confirm Password'
@@ -196,22 +211,32 @@ const Register = () => {
                     </Form.Item>
                   </Col>
                 </Row>
-                <Form.Item>
-                  <Button
-                    style={{
-                      backgroundColor: "#4f46e5",
-                      color: "#fff",
-                      borderRadius: "0.5rem",
-                      height: "2.5rem",
-                      fontSize: "1rem",
-                      fontWeight: 600,
-                    }}
-                    type='primary'
-                    htmlType='submit'
-                    block
-                    loading={loading}>
-                    {loading ? "Creating account..." : "Create account"}
-                  </Button>
+                <Form.Item>                    <Button
+                  style={{
+                    background: "linear-gradient(45deg, #4f46e5, #6366f1)",
+                    color: "#fff",
+                    borderRadius: "0.75rem",
+                    height: "3rem",
+                    fontSize: "1.1rem",
+                    fontWeight: 600,
+                    border: "none",
+                    boxShadow: "0 4px 12px rgba(79, 70, 229, 0.2)",
+                    transition: "all 0.3s ease",
+                  }}
+                  onMouseOver={(e) => {
+                    e.currentTarget.style.transform = "translateY(-2px)";
+                    e.currentTarget.style.boxShadow = "0 6px 20px rgba(79, 70, 229, 0.3)";
+                  }}
+                  onMouseOut={(e) => {
+                    e.currentTarget.style.transform = "translateY(0)";
+                    e.currentTarget.style.boxShadow = "0 4px 12px rgba(79, 70, 229, 0.2)";
+                  }}
+                  type='primary'
+                  htmlType='submit'
+                  block
+                  loading={loading}>
+                  {loading ? "Creating account..." : "Create account"}
+                </Button>
                 </Form.Item>
               </Form>
             </div>

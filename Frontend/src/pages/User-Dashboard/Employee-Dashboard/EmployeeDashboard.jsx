@@ -48,7 +48,6 @@ const EmployeeDashboard = () => {
     pending: 0,
     processing: 0,
   });
-  const [isLoading, setIsLoading] = useState(true);
   const { token } = useToken();
   const currentDate = new Date().toLocaleDateString("en-US", {
     weekday: "long",
@@ -58,7 +57,7 @@ const EmployeeDashboard = () => {
   });
 
   useEffect(() => {
-    setIsLoading(true);
+
 
     Promise.all([
       fetchOrdersToProcess(),
@@ -71,11 +70,11 @@ const EmployeeDashboard = () => {
         setLowStockItems(stockData);
         setRecentActivity(activityData);
         setTaskStats(statsData);
-        setIsLoading(false);
+
       })
       .catch((error) => {
         console.error("Error fetching dashboard data:", error);
-        setIsLoading(false);
+
       });
   }, []);
 
@@ -188,11 +187,9 @@ const EmployeeDashboard = () => {
         <div className='welcome-message'>
           <Alert
             message='Welcome back!'
-            description={`You have ${taskStats.pending} pending tasks, ${
-              lowStockItems.length
-            } inventory alerts, and ${
-              ordersToProcess.filter((o) => o.status === "pending").length
-            } orders to process today.`}
+            description={`You have ${taskStats.pending} pending tasks, ${lowStockItems.length
+              } inventory alerts, and ${ordersToProcess.filter((o) => o.status === "pending").length
+              } orders to process today.`}
             type='info'
             showIcon
           />

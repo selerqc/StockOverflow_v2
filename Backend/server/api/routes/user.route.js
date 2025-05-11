@@ -3,6 +3,8 @@ const express = require("express");
 const login = require("../middleware/login");
 const register = require("../middleware/register");
 const auth = require("../middleware/auth");
+const checkPermission = require("../middleware/checkPermission");
+const { PERMISSIONS } = require("../../config/roles");
 
 const User = require("../controllers/user.controller");
 //routes
@@ -12,7 +14,7 @@ userRoute
   .post("/register", register)
   .post("/login", login)
   .patch("/updateLastLogin/:id", User.UpdateLastLogin)
-  .post("/addManyEmployee", User.AddManyEmployees)
+  .post("/addManyEmployee", auth, checkPermission(PERMISSIONS.CREATE_USER), User.AddManyEmployees)
 
 //middleware
 //everything under the authentication will be controlled
@@ -23,9 +25,9 @@ userRoute.use(auth);
 
 userRoute
   .get("/dashboard", User.UserDashboard)
-  .get("/getUsers", User.GetAllUsers)
-  .post("/addNewUser", User.CreateUser)
-  .patch("/updateUser/:id", User.UpdateUser)
+  .get("/getUsers", checkPermission(PERMISSIONS.VIEW_USERS), User.GetAllUsers)
+  .post("/addNewUser", checkPermission(PERMISSIONS.CREATE_USER), User.CreateUser)
+  .patch("/updateUser/:id", checkPermission(PERMISSIONS.UPDATE_USER), User.UpdateUser)
   .patch("/updateUserLogout/:id", User.updateUserLogout)
-  .get("/getEmployee", User.GetEmployee)
+  .get("/getEmployee", checkPermission(PERMISSIONS.VIEW_EMPLOYEES), User.GetEmployee)
 module.exports = userRoute;

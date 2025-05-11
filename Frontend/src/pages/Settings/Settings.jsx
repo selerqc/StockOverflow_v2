@@ -476,7 +476,7 @@ const Settings = () => {
             </span>
           }
           key='2'>
-          <Card bordered={false}>
+          <Card variant={false}>
             <List
               itemLayout='horizontal'
               dataSource={notificationItems}
@@ -527,7 +527,7 @@ const Settings = () => {
             </span>
           }
           key='4'>
-          <Card bordered={false}>
+          <Card variant={false}>
             <Alert
               message='Data Management'
               description='These actions will affect your stored data. Make sure to create backups regularly.'

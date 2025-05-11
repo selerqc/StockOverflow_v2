@@ -73,6 +73,7 @@ const OutgoingOrderModal = ({ order, onClose }) => {
         initialValues={
           order || {
             product_id: "",
+            user_id: "",
             name: "",
             customer: "",
             stock_level: 0,

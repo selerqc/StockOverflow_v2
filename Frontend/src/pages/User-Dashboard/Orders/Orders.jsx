@@ -133,17 +133,6 @@ const Orders = () => {
   });
 
   const columns = [
-    ...(role === "Admin"
-      ? [
-        {
-          title: "Ordered By",
-          dataIndex: "user_id",
-          key: "user_id",
-          render: (text) => <Tag color='blue'>{`#${text.slice(0, 5)}...`}</Tag>,
-        },
-      ]
-      : []),
-
     {
       title: "Order ID",
       dataIndex: "_id",

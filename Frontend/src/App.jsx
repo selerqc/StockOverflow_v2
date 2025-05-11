@@ -28,34 +28,37 @@ import Settings from "./pages/Settings/Settings";
 import EmployeeDashboard from "./pages/User-Dashboard/Employee-Dashboard/EmployeeDashboard";
 import BusinessOwnerDashboard from "./pages/User-Dashboard/BusinessOwner-Dashboard/BusinessOwner-Dashboard";
 import ManageEmployees from "./pages/User-Dashboard/ManageEmployees/ManageEmployees";
+import { PERMISSIONS } from './utils/permissions';
+import PermissionRoute from './ProtectedRoute/PermissionRoute';
+
 const roleBasedRoutes = {
   Admin: [
-    { path: "admin-dashboard", element: <Dashboard /> },
-    { path: "analytics", element: <Analytics /> },
-    { path: "products", element: <Products /> },
-    { path: "categories", element: <Categories /> },
-    { path: "orders", element: <Orders /> },
-    { path: "manage-users", element: <ManageUsers /> },
-    { path: "alerts", element: <Alerts /> },
-    { path: "settings", element: <Settings /> },
+    { path: "admin-dashboard", element: <Dashboard />, permission: PERMISSIONS.VIEW_ANALYTICS },
+    { path: "analytics", element: <Analytics />, permission: PERMISSIONS.VIEW_ANALYTICS },
+    { path: "products", element: <Products />, permission: PERMISSIONS.VIEW_PRODUCTS },
+    { path: "categories", element: <Categories />, permission: PERMISSIONS.VIEW_CATEGORIES },
+    { path: "orders", element: <Orders />, permission: PERMISSIONS.VIEW_ORDERS },
+    { path: "manage-users", element: <ManageUsers />, permission: PERMISSIONS.VIEW_USERS },
+    { path: "alerts", element: <Alerts />, permission: PERMISSIONS.VIEW_ALERTS },
+    { path: "settings", element: <Settings />, permission: PERMISSIONS.MANAGE_SETTINGS },
   ],
   "Business Owner": [
-    { path: "businessowner-dashboard", element: <BusinessOwnerDashboard /> },
-    { path: "products", element: <Products /> },
-    { path: "categories", element: <Categories /> },
-    { path: "orders", element: <Orders /> },
-    { path: "analytics", element: <Analytics /> },
-    { path: "manage-employees", element: <ManageEmployees /> },
-    { path: "settings", element: <Settings /> },
-    { path: "alerts", element: <Alerts /> },
+    { path: "businessowner-dashboard", element: <BusinessOwnerDashboard />, permission: PERMISSIONS.VIEW_ANALYTICS },
+    { path: "products", element: <Products />, permission: PERMISSIONS.VIEW_PRODUCTS },
+    { path: "categories", element: <Categories />, permission: PERMISSIONS.VIEW_CATEGORIES },
+    { path: "orders", element: <Orders />, permission: PERMISSIONS.VIEW_ORDERS },
+    { path: "analytics", element: <Analytics />, permission: PERMISSIONS.VIEW_ANALYTICS },
+    { path: "manage-employees", element: <ManageEmployees />, permission: PERMISSIONS.VIEW_EMPLOYEES },
+    { path: "settings", element: <Settings />, permission: PERMISSIONS.MANAGE_SETTINGS },
+    { path: "alerts", element: <Alerts />, permission: PERMISSIONS.VIEW_ALERTS },
   ],
   Employee: [
-    { path: "employee-dashboard", element: <EmployeeDashboard /> },
-    { path: "products", element: <Products /> },
-    { path: "categories", element: <Categories /> },
-    { path: "alerts", element: <Alerts /> },
-    { path: "settings", element: <Settings /> },
-    { path: "orders", element: <Orders /> },
+    { path: "employee-dashboard", element: <EmployeeDashboard />, permission: PERMISSIONS.VIEW_ANALYTICS },
+    { path: "products", element: <Products />, permission: PERMISSIONS.VIEW_PRODUCTS },
+    { path: "categories", element: <Categories />, permission: PERMISSIONS.VIEW_CATEGORIES },
+    { path: "alerts", element: <Alerts />, permission: PERMISSIONS.VIEW_ALERTS },
+    { path: "settings", element: <Settings />, permission: PERMISSIONS.MANAGE_SETTINGS },
+    { path: "orders", element: <Orders />, permission: PERMISSIONS.VIEW_ORDERS },
   ],
 };
 
@@ -70,13 +73,18 @@ function AnimatedRoutes() {
   // ) {
   //   return <Navigate to='/login' replace />;
   // }
-
   const renderRoutes = (routes) =>
-    routes.map(({ path, element }) => (
+    routes.map(({ path, element, permission }) => (
       <Route
         key={path}
         path={path}
-        element={<PageWrapper>{element}</PageWrapper>}
+        element={
+          <PageWrapper>
+            <PermissionRoute requiredPermission={permission}>
+              {element}
+            </PermissionRoute>
+          </PageWrapper>
+        }
       />
     ));
 
@@ -129,8 +137,7 @@ function AnimatedRoutes() {
           />
         )}
         <Route path='/' element={<Navigate to='/login' replace />} />
-        <Route path='/not-found' element={<NotFound />} />
-        <Route path='/forbidden' element={<ForbiddenPage />} />
+
       </Routes>
     </AnimatePresence>
   );
