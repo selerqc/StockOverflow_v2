@@ -1,5 +1,4 @@
 const jwtManager = require("../managers/jwtManagers");
-const auth = require("../middleware/auth");
 const dotenv = require("dotenv");
 dotenv.config();
 

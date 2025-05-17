@@ -4,7 +4,7 @@ import {
   ArrowDownOutlined,
   HomeFilled,
 } from "@ant-design/icons";
-import { Button, Table, Select, Skeleton, Tabs, Tag, Tooltip, Badge, Typography } from "antd";
+import { Button, Table, Select, Skeleton, Tabs, Tag, Tooltip, Badge, Typography, Card, Flex, Space } from "antd";
 import axios from "axios";
 import { useToken } from "../../../hooks/TokenContext";
 import { baseURL } from "../../../../config.js";
@@ -13,7 +13,8 @@ import OutgoingOrderModal from "../../../components/modals/OrderModal/OutgoingOr
 import ViewOrderDetails from "../../../components/modals/OrderModal/ViewOrderDetails.jsx";
 import "./Orders.css";
 
-const { Text } = Typography;
+const { Title, Text, Paragraph } = Typography;
+
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
@@ -241,9 +242,35 @@ const Orders = () => {
   return (
     <div className='orders-container'>
       <div className='header'>
-        <h1 className='title'>Order Management</h1>
+        <Card className="page-header-card">
+          <Flex justify="space-between" align="center" wrap="wrap">
+            <Space direction="vertical" size={0}>
+              <Title level={2} style={{ margin: 0 }}>
+                Order Management
+              </Title>
+              <Text type="secondary">Manage your inventory categories</Text>
+            </Space>
+            <Space>
+              <Button
+                type='primary'
+                icon={<ArrowUpOutlined />}
+                onClick={() => handleNewOrder("outgoing")}>
+                New Outgoing Order
+              </Button>
+              <Button
+                type='default'
+                icon={<ArrowDownOutlined />}
+                onClick={() => handleNewOrder("incoming")}>
+                New Incoming Order
+              </Button>
 
-        <div className='action-buttons'>
+            </Space>
+          </Flex>
+        </Card>
+
+
+
+        {/* <div className='action-buttons'>
           <Button
             type='primary'
             icon={<ArrowUpOutlined />}
@@ -256,7 +283,7 @@ const Orders = () => {
             onClick={() => handleNewOrder("incoming")}>
             New Incoming Order
           </Button>
-        </div>
+        </div> */}
       </div>
 
       <Tabs activeKey={activeTab} onChange={handleTabChange} items={tabItems} />

@@ -125,9 +125,7 @@ function Login() {
             <Title level={3} style={{
               fontWeight: 700,
               fontSize: "2.5rem",
-              background: "linear-gradient(45deg, #4f46e5, #6366f1)",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent"
+
             }}>
               Welcome back!
             </Title>
@@ -141,104 +139,105 @@ function Login() {
 
           <div className='login-form-container'>
             <div className='login-form-box'>
-              <Space direction='vertical' style={{ width: "100%" }}>                  <Form
-                name='login'
-                initialValues={{
-                  remember: true,
-                  email: sessionStorage.getItem("email") || ""
-                }}
-                layout='vertical'
-                onFinish={onFinish}
-                autoComplete='on'>
-                <Form.Item
-                  name='email'
-                  label='Email'
-
-                  style={{ marginBottom: "0.5rem" }}
-                  rules={[
-                    {
-                      required: true,
-                      message: "Please enter your email address",
-                      type: "email",
-                      whitespace: true,
-                    },
-                  ]}
-                  hasFeedback>
-                  <Input
-                    size='large'
-                    prefix={<Mail className='login-icon-small' />}
-                    type='email'
-                    placeholder='Enter your email address'
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                  />
-                </Form.Item>
-
-                <Form.Item
-                  name='password'
-                  label='Password'
-                  rules={[
-                    {
-                      required: true,
-                      message: "Please enter your password",
-                    },
-                    {
-                      min: 8,
-                      message: "Password must be at least 8 characters",
-                    },
-                  ]}
-                  style={{ marginBottom: "1rem" }}
-                  hasFeedback>
-                  <Input.Password
-                    size='large'
-                    prefix={<Lock className='login-icon-small' />}
-                    placeholder='Enter password'
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                  />
-                </Form.Item>
-                <Form.Item style={{ marginBottom: "1rem" }}>
-                  <Row justify='space-between' align='middle'>
-                    <Col>
-                      <Form.Item
-                        name='remember'
-                        valuePropName='checked'
-                        noStyle
-                      >
-                        <Checkbox onChange={(e) => setRememberMe(e.target.checked)}>Remember me</Checkbox>
-                      </Form.Item>
-                    </Col>
-                  </Row>
-                </Form.Item>
-
-
-                <Form.Item>                    <Button
-                  block
-                  htmlType='submit'
-                  loading={loading}
-                  style={{
-                    background: "linear-gradient(45deg, #4f46e5, #6366f1)",
-                    color: "#fff",
-                    borderRadius: "0.75rem",
-                    height: "3rem",
-                    fontSize: "1.1rem",
-                    fontWeight: 600,
-                    border: "none",
-                    boxShadow: "0 4px 12px rgba(79, 70, 229, 0.2)",
-                    transition: "all 0.3s ease",
+              <Space direction='vertical' style={{ width: "100%" }}>
+                <Form
+                  name='login'
+                  initialValues={{
+                    remember: true,
+                    email: sessionStorage.getItem("email") || ""
                   }}
-                  onMouseOver={(e) => {
-                    e.currentTarget.style.transform = "translateY(-2px)";
-                    e.currentTarget.style.boxShadow = "0 6px 20px rgba(79, 70, 229, 0.3)";
-                  }}
-                  onMouseOut={(e) => {
-                    e.currentTarget.style.transform = "translateY(0)";
-                    e.currentTarget.style.boxShadow = "0 4px 12px rgba(79, 70, 229, 0.2)";
-                  }}>
-                  {loading ? "Logging in..." : "Log in"}
-                </Button>
-                </Form.Item>
-              </Form>
+                  layout='vertical'
+                  onFinish={onFinish}
+                  autoComplete='on'>
+                  <Form.Item
+                    name='email'
+                    label='Email'
+
+                    style={{ marginBottom: "0.5rem" }}
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please enter your email address",
+                        type: "email",
+                        whitespace: true,
+                      },
+                    ]}
+                    hasFeedback>
+                    <Input
+                      size='large'
+                      prefix={<Mail className='login-icon-small' />}
+                      type='email'
+                      placeholder='Enter your email address'
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                    />
+                  </Form.Item>
+
+                  <Form.Item
+                    name='password'
+                    label='Password'
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please enter your password",
+                      },
+                      {
+                        min: 8,
+                        message: "Password must be at least 8 characters",
+                      },
+                    ]}
+                    style={{ marginBottom: "1rem" }}
+                    hasFeedback>
+                    <Input.Password
+                      size='large'
+                      prefix={<Lock className='login-icon-small' />}
+                      placeholder='Enter password'
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                    />
+                  </Form.Item>
+                  <Form.Item style={{ marginBottom: "1rem" }}>
+                    <Row justify='space-between' align='middle'>
+                      <Col>
+                        <Form.Item
+                          name='remember'
+                          valuePropName='checked'
+                          noStyle
+                        >
+                          <Checkbox onChange={(e) => setRememberMe(e.target.checked)}>Remember me</Checkbox>
+                        </Form.Item>
+                      </Col>
+                    </Row>
+                  </Form.Item>
+
+
+                  <Form.Item>                    <Button
+                    block
+                    htmlType='submit'
+                    loading={loading}
+                    style={{
+                      background: "linear-gradient(45deg, #4f46e5, #6366f1)",
+                      color: "#fff",
+                      borderRadius: "0.75rem",
+                      height: "3rem",
+                      fontSize: "1.1rem",
+                      fontWeight: 600,
+                      border: "none",
+                      boxShadow: "0 4px 12px rgba(79, 70, 229, 0.2)",
+                      transition: "all 0.3s ease",
+                    }}
+                    onMouseOver={(e) => {
+                      e.currentTarget.style.transform = "translateY(-2px)";
+                      e.currentTarget.style.boxShadow = "0 6px 20px rgba(79, 70, 229, 0.3)";
+                    }}
+                    onMouseOut={(e) => {
+                      e.currentTarget.style.transform = "translateY(0)";
+                      e.currentTarget.style.boxShadow = "0 4px 12px rgba(79, 70, 229, 0.2)";
+                    }}>
+                    {loading ? "Logging in..." : "Log in"}
+                  </Button>
+                  </Form.Item>
+                </Form>
                 <hr />
                 <Text
                   type='secondary'

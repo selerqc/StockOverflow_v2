@@ -6,6 +6,7 @@ const auth = (req, res, next) => {
     const jwtPayload = jsonwebtoken.verify(accessToken, process.env.jwt_salt);
 
     req.user = jwtPayload;
+
   } catch (error) {
     res.status(401).json({
       status: error.message,

@@ -1,5 +1,7 @@
 .alerts-container {
   margin-bottom: 1.5rem;
+  padding: 1.5rem;
+  background-color: #ffffff; /* white */
 }
 
 .alerts-header {

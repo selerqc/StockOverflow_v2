@@ -14,7 +14,7 @@ const Alerts = () => {
   const { data } = useFetch(`${baseURL}/alerts/getAlerts`);
 
   useEffect(() => {
-  
+
 
     if (data) {
       setAlerts(data.data);

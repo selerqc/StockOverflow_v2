@@ -1,5 +1,7 @@
 .inventory-container {
   margin-bottom: 24px;
+  padding: 1.5rem;
+  background-color: white;
 }
 
 .inventory-title {
