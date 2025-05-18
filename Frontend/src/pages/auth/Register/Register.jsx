@@ -77,9 +77,7 @@ const Register = () => {
                 style={{
                   fontWeight: 700,
                   fontSize: "2.5rem",
-                  background: "linear-gradient(45deg, #4f46e5, #6366f1)",
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent"
+
                 }}>
                 Create an account
               </Title>

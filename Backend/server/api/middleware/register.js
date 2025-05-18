@@ -15,13 +15,14 @@ const register = async (req, res) => {
   if (password !== confirm_password) throw "Password does not match";
 
   if (!validator.isEmail(email)) throw "Email is not valid";
-  // if (!validator.isStrongPassword(password)) {
-  //   throw "Password is not strong enough";
-  // }
+  if (!validator.isStrongPassword(password)) {
+    throw "Password should contain at least 1 uppercase letter, 1 lowercase letter, 1 number and 1 symbol";
+  }
   const containDuplicate = await userModel.findOne({
     email: email,
   });
   if (containDuplicate) throw "This email already exists";
+
   const hashedPassword = await bcrypt.hash(password, 12);
 
   const createdUser = await userModel.create({

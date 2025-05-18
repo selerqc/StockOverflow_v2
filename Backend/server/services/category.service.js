@@ -4,6 +4,7 @@ const CategoryService = {
   async addCategory(categoryData, userId) {
     const { name, description } = categoryData;
 
+    if (!name) throw "Category name is required";
     const findDuplicateName = await categoryModel.findOne({
       user_id: userId,
       name: name,
