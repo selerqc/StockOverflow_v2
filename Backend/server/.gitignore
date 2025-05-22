@@ -30,5 +30,4 @@ Thumbs.db
 *.bak
 *.tmp
 *.lock
-
-.json
+*.json
