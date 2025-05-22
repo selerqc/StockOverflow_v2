@@ -1,6 +1,5 @@
 const productsModel = require("../models/products.model");
 const validator = require("validator");
-const { find } = require("../models/transaction.model");
 
 const ProductService = {
 
@@ -45,7 +44,7 @@ const ProductService = {
     const findDuplicateSku = await productsModel.findOne({
       sku: sku,
     });
-
+    if (!validator.isAlphanumeric(name)) throw "Name must be alphanumeric";
     if (findDuplicateName) throw "Product already exists with this name";
 
     if (findDuplicateSku) throw "SKU already exists";
